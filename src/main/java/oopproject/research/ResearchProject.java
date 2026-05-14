@@ -1,10 +1,14 @@
 package oopproject.research;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import oopproject.exceptions.NonResearcherException;
 
-public class ResearchProject {
+public class ResearchProject implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final String topic;
     private final Set<Researcher> participants = new HashSet<>();
     private final Set<ResearchPaper> papers = new HashSet<>();
@@ -13,7 +17,17 @@ public class ResearchProject {
         this.topic = topic;
     }
 
-    public boolean addParticipant(Researcher researcher) {
+    public boolean addParticipant(Object candidate) throws NonResearcherException {
+        if (!(candidate instanceof Researcher researcher)) {
+            throw new NonResearcherException("Only researchers can join a research project.");
+        }
+        return addParticipant(researcher);
+    }
+
+    public boolean addParticipant(Researcher researcher) throws NonResearcherException {
+        if (researcher == null || !researcher.isResearcher()) {
+            throw new NonResearcherException("Only active researchers can join a research project.");
+        }
         return participants.add(researcher);
     }
 
@@ -26,6 +40,9 @@ public class ResearchProject {
     }
 
     public boolean addPaper(ResearchPaper paper) {
+        if (paper == null) {
+            return false;
+        }
         return papers.add(paper);
     }
 
@@ -47,5 +64,10 @@ public class ResearchProject {
 
     public Set<ResearchPaper> getPapers() {
         return Collections.unmodifiableSet(papers);
+    }
+
+    @Override
+    public String toString() {
+        return topic + " [participants=" + participants.size() + ", papers=" + papers.size() + "]";
     }
 }

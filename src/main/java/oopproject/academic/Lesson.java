@@ -1,8 +1,11 @@
 package oopproject.academic;
 
+import java.io.Serializable;
 import oopproject.enums.LessonType;
 
-public class Lesson {
+public class Lesson implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private TimeSlot time;
     private String room;
     private LessonType type;

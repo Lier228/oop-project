@@ -64,12 +64,15 @@ public class Admin extends User {
     }
 
     public void updateLogs() {
+        System.out.println("Logs updated");
     }
 
     public void blockUser(User user) {
+        System.out.println(user.username + " blocked");
     }
 
     public void assignRole(User user, UserType role) {
+        System.out.println("Role assigned to " + user.username);
     }
 }
 

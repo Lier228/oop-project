@@ -14,6 +14,8 @@ import oopproject.research.Researcher;
 
 public class Teacher extends Employee implements Researcher {
     private TeacherType title;
+    private boolean researcher;
+    private String researchSchool = "UNSPECIFIED";
     private final List<Course> courses = new ArrayList<>();
     private final List<ResearchPaper> researchPapers = new ArrayList<>();
 
@@ -24,6 +26,7 @@ public class Teacher extends Employee implements Researcher {
                    double salary, LocalDate hireDate, TeacherType title) {
         super(id, username, password, email, salary, hireDate);
         this.title = title;
+        this.researcher = title == TeacherType.PROFESSOR;
     }
 
     public void putMark(Enrollment enrollment, Mark mark) {
@@ -54,14 +57,45 @@ public class Teacher extends Employee implements Researcher {
         course.addInstructor(this);
     }
 
+    public void becomeResearcher(String school) {
+        researcher = true;
+        researchSchool = school;
+    }
+
     @Override
     public boolean addResearchPaper(ResearchPaper paper) {
-        return researchPapers.add(paper);
+        if (paper == null || researchPapers.contains(paper)) {
+            return false;
+        }
+        researcher = true;
+        researchPapers.add(paper);
+        paper.addAuthor(this);
+        return true;
+    }
+
+    @Override
+    public boolean removeResearchPaper(ResearchPaper paper) {
+        return researchPapers.remove(paper);
     }
 
     @Override
     public List<ResearchPaper> getResearchPapers() {
         return Collections.unmodifiableList(researchPapers);
+    }
+
+    @Override
+    public String getResearcherName() {
+        return username;
+    }
+
+    @Override
+    public boolean isResearcher() {
+        return researcher;
+    }
+
+    @Override
+    public String getResearchSchool() {
+        return researchSchool;
     }
 
     public TeacherType getTitle() {

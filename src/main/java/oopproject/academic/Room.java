@@ -1,8 +1,11 @@
 package oopproject.academic;
 
+import java.io.Serializable;
 import oopproject.enums.RoomType;
 
-public class Room {
+public class Room implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String roomNumber;
     private RoomType roomType;
 

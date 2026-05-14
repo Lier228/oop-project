@@ -1,12 +1,15 @@
 package oopproject.academic;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import oopproject.users.Student;
 import oopproject.users.Teacher;
 
-public class StudyMaterial {
+public class StudyMaterial implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String title;
     private String description;
     private String fileName;

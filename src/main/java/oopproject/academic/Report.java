@@ -1,9 +1,12 @@
 package oopproject.academic;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import oopproject.enums.ReportType;
 
-public class Report {
+public class Report implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private ReportType type;
     private LocalDate createdDate;
     private String data;

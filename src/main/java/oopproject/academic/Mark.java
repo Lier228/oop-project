@@ -1,6 +1,10 @@
 package oopproject.academic;
 
-public class Mark {
+import java.io.Serializable;
+
+public class Mark implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private double att1;
     private double att2;
     private double finalExam;
@@ -13,6 +17,22 @@ public class Mark {
 
     public double getTotal() {
         return att1 + att2 + finalExam;
+    }
+
+    public double getAtt1() {
+        return att1;
+    }
+
+    public double getAtt2() {
+        return att2;
+    }
+
+    public double getFinalExam() {
+        return finalExam;
+    }
+
+    public boolean isPassing() {
+        return getTotal() >= 50.0;
     }
 
     @Override

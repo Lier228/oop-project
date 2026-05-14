@@ -1,11 +1,15 @@
 package oopproject.users;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import oopproject.academic.News;
 
-public class User {
+public class User implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     protected int id;
     protected String username;
     protected String password;
@@ -44,6 +48,22 @@ public class User {
 
     public List<News> getInboxNews() {
         return Collections.unmodifiableList(inboxNews);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof User user)) {
+            return false;
+        }
+        return id == user.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

@@ -1,12 +1,16 @@
 package oopproject.academic;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import oopproject.users.Student;
 import oopproject.users.Teacher;
 
-public class Course {
+public class Course implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String name;
     private String code;
     private int credits;
@@ -24,24 +28,28 @@ public class Course {
     }
 
     public void addStudent(Student student) {
-        if (!students.contains(student)) {
+        if (student != null && !students.contains(student)) {
             students.add(student);
             enrollments.add(new Enrollment(student, this));
         }
     }
 
     public void addInstructor(Teacher teacher) {
-        if (!instructors.contains(teacher)) {
+        if (teacher != null && !instructors.contains(teacher)) {
             instructors.add(teacher);
         }
     }
 
     public void addLesson(Lesson lesson) {
-        lessons.add(lesson);
+        if (lesson != null) {
+            lessons.add(lesson);
+        }
     }
 
     public void addMaterial(StudyMaterial material) {
-        materials.add(material);
+        if (material != null) {
+            materials.add(material);
+        }
     }
 
     public Enrollment findEnrollment(Student student) {
@@ -49,6 +57,22 @@ public class Course {
                 .filter(enrollment -> enrollment.getStudent().equals(student))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public boolean isStudentEnrolled(Student student) {
+        return findEnrollment(student) != null;
+    }
+
+    public List<Enrollment> getEnrollments() {
+        return Collections.unmodifiableList(enrollments);
+    }
+
+    public List<Lesson> getLessons() {
+        return Collections.unmodifiableList(lessons);
+    }
+
+    public List<StudyMaterial> getMaterials() {
+        return Collections.unmodifiableList(materials);
     }
 
     public String getName() {
@@ -77,5 +101,26 @@ public class Course {
 
     public List<Teacher> getInstructors() {
         return Collections.unmodifiableList(instructors);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof Course course)) {
+            return false;
+        }
+        return Objects.equals(code, course.code);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(code);
+    }
+
+    @Override
+    public String toString() {
+        return code + " - " + name + " (" + credits + " credits, open=" + open + ")";
     }
 }
