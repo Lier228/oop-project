@@ -38,6 +38,29 @@ public class Admin extends User {
     }
 
     public void removeUser() {
+
+        System.out.print("Username: ");
+        String username = sc.nextLine();
+
+        University uni = University.getInstance();
+
+        User target = null;
+
+        for (User u : uni.users) {
+            if (u.username.equals(username)) {
+                target = u;
+                break;
+            }
+        }
+
+        if (target == null) {
+            System.out.println("User not found");
+            return;
+        }
+
+        uni.users.remove(target);
+
+        System.out.println("User removed: " + target);
     }
 
     public void updateLogs() {
