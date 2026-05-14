@@ -29,6 +29,9 @@ university.registerStudentToCourse(studentId, "OOP101");
 university.putMark(teacherId, studentId, "OOP101", mark);
 student.getTranscript();
 student.recalculateGpa();
+university.getResearchPapersByYear(2026);
+university.getTopCitedPapers(3);
+university.getResearchersBySchool("SITE");
 DataStore.saveState();
 ```
 

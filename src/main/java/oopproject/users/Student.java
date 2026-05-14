@@ -35,11 +35,12 @@ public class Student extends User {
     private Researcher researchSupervisor;
 
     public Student() {
+        this.role = UserType.STUDENT;
     }
 
     public Student(int id, String username, String password, String email,
                    double gpa, int year, int credits, int failedCourses) {
-        super(id, username, password, email);
+        super(id, username, password, email, UserType.STUDENT);
         this.gpa = gpa;
         this.year = year;
         this.credits = credits;
@@ -181,6 +182,8 @@ public class Student extends User {
                 + " year=" + year
                 + ", gpa=" + String.format(Locale.US, "%.2f", gpa)
                 + ", registeredCredits=" + credits
-                + ", completedCredits=" + getCompletedCredits();
+                + ", completedCredits=" + getCompletedCredits()
+                + ", role=" + getRole()
+                + ", active=" + isActive();
     }
 }

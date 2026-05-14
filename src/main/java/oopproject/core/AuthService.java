@@ -18,7 +18,9 @@ public class AuthService {
         }
 
         Optional<User> authenticatedUser = university.getUsers().stream()
-                .filter(user -> username.equalsIgnoreCase(user.getUsername()) && user.checkPassword(password))
+                .filter(user -> user.isActive()
+                        && username.equalsIgnoreCase(user.getUsername())
+                        && user.checkPassword(password))
                 .findFirst();
 
         currentUser = authenticatedUser.orElse(null);

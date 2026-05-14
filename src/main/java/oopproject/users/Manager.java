@@ -9,17 +9,20 @@ import oopproject.academic.Report;
 import oopproject.academic.Request;
 import oopproject.enums.ManagerType;
 import oopproject.enums.ReportType;
+import oopproject.enums.UserType;
 
 public class Manager extends Employee {
     private ManagerType type;
     private final List<News> news = new ArrayList<>();
 
     public Manager() {
+        this.role = UserType.MANAGER;
     }
 
     public Manager(int id, String username, String password, String email,
                    double salary, LocalDate hireDate, ManagerType type) {
         super(id, username, password, email, salary, hireDate);
+        this.role = UserType.MANAGER;
         this.type = type;
     }
 

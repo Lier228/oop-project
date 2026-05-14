@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import oopproject.enums.ResearchSortType;
 
 public interface Researcher extends Serializable {
     boolean addResearchPaper(ResearchPaper paper);
@@ -60,8 +61,43 @@ public interface Researcher extends Serializable {
         return sorted;
     }
 
+    default List<ResearchPaper> getPapersSorted(ResearchSortType sortType) {
+        return getPapersSorted(ResearchPaperComparators.byType(sortType));
+    }
+
+    default List<ResearchPaper> getPapersByYear(int year) {
+        return getResearchPapers().stream()
+                .filter(paper -> paper.getPublishDate() != null && paper.getPublishDate().getYear() == year)
+                .toList();
+    }
+
+    default List<ResearchPaper> getPapersByJournal(String journal) {
+        if (journal == null || journal.isBlank()) {
+            return List.of();
+        }
+        return getResearchPapers().stream()
+                .filter(paper -> paper.getJournal() != null && paper.getJournal().equalsIgnoreCase(journal))
+                .toList();
+    }
+
+    default List<ResearchPaper> getTopCitedPapers(int limit) {
+        if (limit <= 0) {
+            return List.of();
+        }
+        return getResearchPapers().stream()
+                .sorted(ResearchPaperComparators.BY_CITATIONS_DESC)
+                .limit(limit)
+                .toList();
+    }
+
     default void printPapers(Comparator<ResearchPaper> comparator) {
         for (ResearchPaper paper : getPapersSorted(comparator)) {
+            System.out.println(paper.toDisplayString());
+        }
+    }
+
+    default void printPapers(ResearchSortType sortType) {
+        for (ResearchPaper paper : getPapersSorted(sortType)) {
             System.out.println(paper.toDisplayString());
         }
     }

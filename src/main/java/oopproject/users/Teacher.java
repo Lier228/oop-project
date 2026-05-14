@@ -9,6 +9,7 @@ import oopproject.academic.Enrollment;
 import oopproject.academic.Mark;
 import oopproject.academic.StudyMaterial;
 import oopproject.enums.TeacherType;
+import oopproject.enums.UserType;
 import oopproject.research.ResearchPaper;
 import oopproject.research.Researcher;
 
@@ -20,11 +21,13 @@ public class Teacher extends Employee implements Researcher {
     private final List<ResearchPaper> researchPapers = new ArrayList<>();
 
     public Teacher() {
+        this.role = UserType.TEACHER;
     }
 
     public Teacher(int id, String username, String password, String email,
                    double salary, LocalDate hireDate, TeacherType title) {
         super(id, username, password, email, salary, hireDate);
+        this.role = UserType.TEACHER;
         this.title = title;
         this.researcher = title == TeacherType.PROFESSOR;
     }

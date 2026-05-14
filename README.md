@@ -15,8 +15,11 @@ It does not implement a full working simulation or console workflow.
 Research package now covers the important requirements:
 
 - paper sorting by publication date, citations, and article length;
+- `ResearchSortType` enum for date, citation and length sorting;
 - `printPapers(Comparator<ResearchPaper>)` for each researcher;
 - printing all university papers through `ResearchService`;
+- filtering papers by year or journal;
+- top-cited papers and researchers by school;
 - top-cited researcher by school or by year;
 - h-index validation for fourth-year student supervisors;
 - custom exception when a non-researcher tries to join a research project.
@@ -25,7 +28,7 @@ Research package now covers the important requirements:
 
 - `oopproject.academic` - courses, enrollments, schedule, rooms, requests, reports, news.
 - `oopproject.academic.Transcript` - student transcript summary with GPA, completed credits and academic standing.
-- `oopproject.users` - user hierarchy: admin, student, teacher, manager, employee.
+- `oopproject.users` - abstract user base, active/blocked accounts, roles and user hierarchy: admin, student, teacher, manager, employee.
 - `oopproject.research` - researcher interface, researcher profiles, research papers, projects, comparators and research service methods.
 - `oopproject.enums` - all enums from the UML draft.
 - `oopproject.exceptions` - custom exceptions.

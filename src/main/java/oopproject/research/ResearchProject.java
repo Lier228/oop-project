@@ -28,7 +28,13 @@ public class ResearchProject implements Serializable {
         if (researcher == null || !researcher.isResearcher()) {
             throw new NonResearcherException("Only active researchers can join a research project.");
         }
-        return participants.add(researcher);
+        boolean added = participants.add(researcher);
+        if (added) {
+            for (ResearchPaper paper : papers) {
+                paper.addAuthor(researcher);
+            }
+        }
+        return added;
     }
 
     public boolean deleteParticipant(Researcher researcher) {
@@ -42,6 +48,9 @@ public class ResearchProject implements Serializable {
     public boolean addPaper(ResearchPaper paper) {
         if (paper == null) {
             return false;
+        }
+        for (Researcher participant : participants) {
+            paper.addAuthor(participant);
         }
         return papers.add(paper);
     }

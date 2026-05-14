@@ -90,6 +90,8 @@ public class ConsoleUIController {
             System.out.println("2. Show logs");
             System.out.println("3. Show courses");
             System.out.println("4. Save state");
+            System.out.println("5. Block user");
+            System.out.println("6. Unblock user");
             System.out.println("0. Logout");
             int choice = readInt();
             switch (choice) {
@@ -97,6 +99,8 @@ public class ConsoleUIController {
                 case 2 -> university.getLogs().forEach(System.out::println);
                 case 3 -> showCourses();
                 case 4 -> saveState();
+                case 5 -> setUserActive(false);
+                case 6 -> setUserActive(true);
                 case 0 -> inMenu = false;
                 default -> System.out.println("Unknown option.");
             }
@@ -202,6 +206,28 @@ public class ConsoleUIController {
 
     private void showCourses() {
         university.getCourses().forEach(System.out::println);
+    }
+
+    private void setUserActive(boolean active) {
+        if (!(currentUser instanceof Admin admin)) {
+            return;
+        }
+        university.getUsers().forEach(System.out::println);
+        System.out.print("User id: ");
+        int userId = readInt();
+        User user = university.findUserById(userId).orElse(null);
+        if (user == null) {
+            System.out.println("User not found.");
+            return;
+        }
+        if (active) {
+            admin.unblockUser(user);
+            university.addLog(currentUser, "USER_UNBLOCKED " + user.getUsername());
+        } else {
+            admin.blockUser(user);
+            university.addLog(currentUser, "USER_BLOCKED " + user.getUsername());
+        }
+        System.out.println("User updated.");
     }
 
     private void showOpenCourses() {

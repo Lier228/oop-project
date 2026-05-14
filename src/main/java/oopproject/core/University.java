@@ -10,7 +10,9 @@ import oopproject.academic.Enrollment;
 import oopproject.academic.Mark;
 import oopproject.exceptions.AlreadyRegisteredException;
 import oopproject.exceptions.CreditLimitExceededException;
+import oopproject.enums.ResearchSortType;
 import oopproject.research.Researcher;
+import oopproject.research.ResearchPaper;
 import oopproject.research.ResearchProject;
 import oopproject.research.ResearchService;
 import oopproject.users.Admin;
@@ -210,6 +212,26 @@ public class University implements Serializable {
 
     public Optional<Researcher> findTopCitedResearcherOfYear(int year) {
         return ResearchService.findTopCitedResearcherOfYear(researchers, year);
+    }
+
+    public List<Researcher> getResearchersBySchool(String school) {
+        return ResearchService.getResearchersBySchool(researchers, school);
+    }
+
+    public List<ResearchPaper> getResearchPapersSorted(ResearchSortType sortType) {
+        return ResearchService.getAllPapersSorted(researchers, sortType);
+    }
+
+    public List<ResearchPaper> getResearchPapersByYear(int year) {
+        return ResearchService.getPapersByYear(researchers, year);
+    }
+
+    public List<ResearchPaper> getResearchPapersByJournal(String journal) {
+        return ResearchService.getPapersByJournal(researchers, journal);
+    }
+
+    public List<ResearchPaper> getTopCitedPapers(int limit) {
+        return ResearchService.getTopCitedPapers(researchers, limit);
     }
 
     public void addLog(User user, String action) {

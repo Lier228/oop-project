@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import oopproject.academic.Request;
+import oopproject.enums.UserType;
 
 public class Employee extends User {
     protected double salary;
@@ -12,10 +13,11 @@ public class Employee extends User {
     protected List<Request> requests = new ArrayList<>();
 
     public Employee() {
+        this.role = UserType.EMPLOYEE;
     }
 
     public Employee(int id, String username, String password, String email, double salary, LocalDate hireDate) {
-        super(id, username, password, email);
+        super(id, username, password, email, UserType.EMPLOYEE);
         this.salary = salary;
         this.hireDate = hireDate;
     }

@@ -111,6 +111,8 @@ public final class DataStore {
             json.append("    {")
                     .append("\"id\": ").append(user.getId()).append(", ")
                     .append("\"type\": \"").append(user.getClass().getSimpleName()).append("\", ")
+                    .append("\"role\": \"").append(user.getRole()).append("\", ")
+                    .append("\"active\": ").append(user.isActive()).append(", ")
                     .append("\"username\": \"").append(escape(user.getUsername())).append("\", ")
                     .append("\"email\": \"").append(escape(user.getEmail())).append("\"")
                     .append("}");
