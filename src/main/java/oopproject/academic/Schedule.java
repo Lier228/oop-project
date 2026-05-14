@@ -1,11 +1,14 @@
 package oopproject.academic;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import oopproject.users.Student;
 
-public class Schedule {
+public class Schedule implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private Student student;
     private final List<ScheduleEntry> scheduleEntries = new ArrayList<>();
 

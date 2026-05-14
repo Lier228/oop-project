@@ -1,6 +1,10 @@
 package oopproject.academic;
 
-public class ScheduleEntry {
+import java.io.Serializable;
+
+public class ScheduleEntry implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String courseName;
     private String teacherName;
     private Room room;

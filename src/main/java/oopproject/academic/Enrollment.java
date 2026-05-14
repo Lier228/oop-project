@@ -1,8 +1,11 @@
 package oopproject.academic;
 
+import java.io.Serializable;
 import oopproject.users.Student;
 
-public class Enrollment {
+public class Enrollment implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private Student student;
     private Course course;
     private Mark mark;

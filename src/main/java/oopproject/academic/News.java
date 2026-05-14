@@ -1,8 +1,11 @@
 package oopproject.academic;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class News {
+public class News implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String title;
     private String content;
     private LocalDate date;

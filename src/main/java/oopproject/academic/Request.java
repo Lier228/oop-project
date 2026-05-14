@@ -1,9 +1,12 @@
 package oopproject.academic;
 
+import java.io.Serializable;
 import oopproject.enums.RequestStatus;
 import oopproject.enums.RequestType;
 
-public class Request {
+public class Request implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private static long requestIdCounter = 1;
 
     private int senderId;

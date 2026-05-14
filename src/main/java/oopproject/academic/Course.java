@@ -1,12 +1,15 @@
 package oopproject.academic;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import oopproject.users.Student;
 import oopproject.users.Teacher;
 
-public class Course {
+public class Course implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String name;
     private String code;
     private int credits;

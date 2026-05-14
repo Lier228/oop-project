@@ -9,6 +9,7 @@ import oopproject.academic.Schedule;
 import oopproject.academic.StudyMaterial;
 import oopproject.enums.UserType;
 import oopproject.exceptions.CreditLimitExceededException;
+import oopproject.exceptions.LowHIndexException;
 import oopproject.research.Researcher;
 
 public class Student extends User {
@@ -48,7 +49,10 @@ public class Student extends User {
         return Collections.unmodifiableList(enrollments);
     }
 
-    public void assignResearchSupervisor(Researcher supervisor) {
+    public void assignResearchSupervisor(Researcher supervisor) throws LowHIndexException {
+        if (year >= 4 && (supervisor == null || supervisor.calculateHIndex() < 3)) {
+            throw new LowHIndexException("Fourth-year student supervisor must have h-index at least 3.");
+        }
         this.researchSupervisor = supervisor;
     }
 
@@ -70,5 +74,25 @@ public class Student extends User {
 
     public UserType getUserType() {
         return userType;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public double getGpa() {
+        return gpa;
+    }
+
+    public int getCredits() {
+        return credits;
+    }
+
+    public int getFailedCourses() {
+        return failedCourses;
+    }
+
+    public Researcher getResearchSupervisor() {
+        return researchSupervisor;
     }
 }

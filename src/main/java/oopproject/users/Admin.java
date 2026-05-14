@@ -4,7 +4,7 @@ import java.util.Scanner;
 import oopproject.enums.UserType;
 
 public class Admin extends User {
-    private final Scanner scanner = new Scanner(System.in);
+    private final transient Scanner scanner = new Scanner(System.in);
 
     public Admin() {
     }

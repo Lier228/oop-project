@@ -1,6 +1,10 @@
 package oopproject.academic;
 
-public class Mark {
+import java.io.Serializable;
+
+public class Mark implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private double att1;
     private double att2;
     private double finalExam;
