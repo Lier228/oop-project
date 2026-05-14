@@ -6,6 +6,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import oopproject.academic.Course;
+import oopproject.academic.Enrollment;
+import oopproject.academic.Mark;
+import oopproject.exceptions.AlreadyRegisteredException;
+import oopproject.exceptions.CreditLimitExceededException;
 import oopproject.research.Researcher;
 import oopproject.research.ResearchProject;
 import oopproject.research.ResearchService;
@@ -55,6 +59,73 @@ public class University implements Serializable {
         return true;
     }
 
+    public boolean openCourseForRegistration(String code) {
+        Optional<Course> course = findCourseByCode(code);
+        if (course.isEmpty()) {
+            return false;
+        }
+        course.get().setOpen(true);
+        addLog(null, "COURSE_OPENED " + course.get().getCode());
+        return true;
+    }
+
+    public boolean closeCourseForRegistration(String code) {
+        Optional<Course> course = findCourseByCode(code);
+        if (course.isEmpty()) {
+            return false;
+        }
+        course.get().setOpen(false);
+        addLog(null, "COURSE_CLOSED " + course.get().getCode());
+        return true;
+    }
+
+    public boolean assignTeacherToCourse(int teacherId, String courseCode) {
+        Optional<User> user = findUserById(teacherId);
+        Optional<Course> course = findCourseByCode(courseCode);
+        if (user.isEmpty() || course.isEmpty() || !(user.get() instanceof Teacher teacher)) {
+            return false;
+        }
+        teacher.addCourse(course.get());
+        addLog(teacher, "TEACHER_ASSIGNED " + course.get().getCode());
+        return true;
+    }
+
+    public boolean registerStudentToCourse(int studentId, String courseCode)
+            throws CreditLimitExceededException, AlreadyRegisteredException {
+        Optional<User> user = findUserById(studentId);
+        Optional<Course> course = findCourseByCode(courseCode);
+        if (user.isEmpty() || course.isEmpty() || !(user.get() instanceof Student student)) {
+            return false;
+        }
+        student.registerCourse(course.get());
+        addLog(student, "COURSE_REGISTERED " + course.get().getCode());
+        return true;
+    }
+
+    public boolean putMark(int teacherId, int studentId, String courseCode, Mark mark) {
+        Optional<User> teacherUser = findUserById(teacherId);
+        Optional<User> studentUser = findUserById(studentId);
+        Optional<Course> course = findCourseByCode(courseCode);
+        if (teacherUser.isEmpty()
+                || studentUser.isEmpty()
+                || course.isEmpty()
+                || !(teacherUser.get() instanceof Teacher teacher)
+                || !(studentUser.get() instanceof Student student)
+                || mark == null) {
+            return false;
+        }
+        if (!course.get().getInstructors().contains(teacher)) {
+            return false;
+        }
+        Enrollment enrollment = course.get().findEnrollment(student);
+        if (enrollment == null) {
+            return false;
+        }
+        teacher.putMark(enrollment, mark);
+        addLog(teacher, "MARK_PUT " + course.get().getCode() + " studentId=" + student.getId());
+        return true;
+    }
+
     public boolean addResearcher(Researcher researcher) {
         if (researcher == null || !researcher.isResearcher() || researchers.contains(researcher)) {
             return false;
@@ -83,6 +154,16 @@ public class University implements Serializable {
             researchers.remove(researcher);
         }
         addLog(user.get(), "USER_REMOVED");
+        return true;
+    }
+
+    public boolean removeCourseByCode(String code) {
+        Optional<Course> course = findCourseByCode(code);
+        if (course.isEmpty()) {
+            return false;
+        }
+        courses.remove(course.get());
+        addLog(null, "COURSE_REMOVED " + course.get().getCode());
         return true;
     }
 
@@ -164,6 +245,24 @@ public class University implements Serializable {
         return Collections.unmodifiableList(courses);
     }
 
+    public List<Course> getCoursesByStudent(Student student) {
+        if (student == null) {
+            return Collections.emptyList();
+        }
+        return courses.stream()
+                .filter(course -> course.isStudentEnrolled(student))
+                .toList();
+    }
+
+    public List<Course> getCoursesByTeacher(Teacher teacher) {
+        if (teacher == null) {
+            return Collections.emptyList();
+        }
+        return courses.stream()
+                .filter(course -> course.getInstructors().contains(teacher))
+                .toList();
+    }
+
     public List<Researcher> getResearchers() {
         return Collections.unmodifiableList(researchers);
     }
@@ -174,6 +273,15 @@ public class University implements Serializable {
 
     public List<Log> getLogs() {
         return Collections.unmodifiableList(logs);
+    }
+
+    public List<Log> getLogsByUser(User user) {
+        if (user == null) {
+            return Collections.emptyList();
+        }
+        return logs.stream()
+                .filter(log -> user.equals(log.getUser()))
+                .toList();
     }
 
     public List<Student> getStudents() {

@@ -8,6 +8,7 @@ import oopproject.academic.Enrollment;
 import oopproject.academic.Schedule;
 import oopproject.academic.StudyMaterial;
 import oopproject.enums.UserType;
+import oopproject.exceptions.AlreadyRegisteredException;
 import oopproject.exceptions.CreditLimitExceededException;
 import oopproject.exceptions.LowHIndexException;
 import oopproject.research.Researcher;
@@ -36,12 +37,26 @@ public class Student extends User {
         this.failedCourses = failedCourses;
     }
 
-    public void registerCourse(Course course) throws CreditLimitExceededException {
+    public void registerCourse(Course course) throws CreditLimitExceededException, AlreadyRegisteredException {
+        if (course == null) {
+            throw new IllegalArgumentException("Course cannot be null.");
+        }
+        if (!course.isOpen()) {
+            throw new IllegalStateException("Course is not open for registration.");
+        }
+        boolean alreadyRegistered = enrollments.stream()
+                .anyMatch(enrollment -> enrollment.getCourse().equals(course));
+        if (alreadyRegistered || course.isStudentEnrolled(this)) {
+            throw new AlreadyRegisteredException("Student is already registered for " + course.getCode() + ".");
+        }
         if (credits + course.getCredits() > MAX_CREDITS) {
             throw new CreditLimitExceededException("Student cannot register for more than " + MAX_CREDITS + " credits.");
         }
         course.addStudent(this);
-        enrollments.add(course.findEnrollment(this));
+        Enrollment enrollment = course.findEnrollment(this);
+        if (enrollment != null) {
+            enrollments.add(enrollment);
+        }
         credits += course.getCredits();
     }
 

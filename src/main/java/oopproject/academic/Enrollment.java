@@ -33,4 +33,10 @@ public class Enrollment implements Serializable {
     public void setMark(Mark mark) {
         this.mark = mark;
     }
+
+    @Override
+    public String toString() {
+        String markText = mark == null ? "not graded" : mark.toString();
+        return course.getCode() + " - " + course.getName() + ": " + markText;
+    }
 }

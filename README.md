@@ -33,9 +33,10 @@ Research package now covers the important requirements:
 Core package now works as the integration layer:
 
 - `University` stores users, courses, researchers, research projects and logs;
+- `University` coordinates course registration, teacher-course assignment, marks, lookups and course status;
 - `AuthService` handles login/logout and writes log records;
 - `DataStore` saves/loads the application state with Java serialization and exports a readable JSON snapshot;
-- `ConsoleUIController` provides a small console entrypoint for demo/testing.
+- `ConsoleUIController` provides a console demo for student, teacher, manager and admin flows.
 
 ## Compile
 

@@ -17,6 +17,19 @@ Use `oopproject.core.University` as the integration point. Team members should n
 4. Keep business rules in the owning package. Example: research h-index rules stay in `research`/`Student`, not in `ConsoleUIController`.
 5. Keep console printing in `ConsoleUIController`; model classes should return data, not control the app flow.
 
+## Common Integration Calls
+
+```java
+University university = University.getInstance();
+university.addUser(student);
+university.addCourse(course);
+university.assignTeacherToCourse(teacherId, "OOP101");
+university.openCourseForRegistration("OOP101");
+university.registerStudentToCourse(studentId, "OOP101");
+university.putMark(teacherId, studentId, "OOP101", mark);
+DataStore.saveState();
+```
+
 ## Git Rules
 
 - One task per branch.
