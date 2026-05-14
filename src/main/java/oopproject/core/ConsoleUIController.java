@@ -119,7 +119,7 @@ public class ConsoleUIController {
             switch (choice) {
                 case 1 -> showOpenCourses();
                 case 2 -> registerCurrentStudent(student);
-                case 3 -> student.viewTranscript().forEach(System.out::println);
+                case 3 -> System.out.println(student.getTranscript());
                 case 4 -> university.getCoursesByStudent(student).forEach(System.out::println);
                 case 5 -> assignSupervisor(student);
                 case 6 -> printSupervisor(student);

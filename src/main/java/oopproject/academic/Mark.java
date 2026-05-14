@@ -19,6 +19,22 @@ public class Mark implements Serializable {
         return att1 + att2 + finalExam;
     }
 
+    public double getAtt1() {
+        return att1;
+    }
+
+    public double getAtt2() {
+        return att2;
+    }
+
+    public double getFinalExam() {
+        return finalExam;
+    }
+
+    public boolean isPassing() {
+        return getTotal() >= 50.0;
+    }
+
     @Override
     public String toString() {
         return "Mark{att1=" + att1 + ", att2=" + att2 + ", finalExam=" + finalExam + ", total=" + getTotal() + "}";

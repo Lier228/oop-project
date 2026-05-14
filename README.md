@@ -24,6 +24,7 @@ Research package now covers the important requirements:
 ## Structure
 
 - `oopproject.academic` - courses, enrollments, schedule, rooms, requests, reports, news.
+- `oopproject.academic.Transcript` - student transcript summary with GPA, completed credits and academic standing.
 - `oopproject.users` - user hierarchy: admin, student, teacher, manager, employee.
 - `oopproject.research` - researcher interface, researcher profiles, research papers, projects, comparators and research service methods.
 - `oopproject.enums` - all enums from the UML draft.

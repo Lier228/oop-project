@@ -27,6 +27,8 @@ university.assignTeacherToCourse(teacherId, "OOP101");
 university.openCourseForRegistration("OOP101");
 university.registerStudentToCourse(studentId, "OOP101");
 university.putMark(teacherId, studentId, "OOP101", mark);
+student.getTranscript();
+student.recalculateGpa();
 DataStore.saveState();
 ```
 

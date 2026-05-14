@@ -2,11 +2,16 @@ package oopproject.users;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import oopproject.academic.Course;
 import oopproject.academic.Enrollment;
+import oopproject.academic.Mark;
 import oopproject.academic.Schedule;
 import oopproject.academic.StudyMaterial;
+import oopproject.academic.Transcript;
 import oopproject.enums.UserType;
 import oopproject.exceptions.AlreadyRegisteredException;
 import oopproject.exceptions.CreditLimitExceededException;
@@ -14,6 +19,8 @@ import oopproject.exceptions.LowHIndexException;
 import oopproject.research.Researcher;
 
 public class Student extends User {
+    private static final long serialVersionUID = 1L;
+
     public static final int MAX_CREDITS = 21;
 
     private double gpa;
@@ -23,6 +30,8 @@ public class Student extends User {
     private final UserType userType = UserType.STUDENT;
     private Schedule schedule = new Schedule(this);
     private final List<Enrollment> enrollments = new ArrayList<>();
+    private final Map<Integer, Integer> teacherRatings = new HashMap<>();
+    private Transcript transcript = new Transcript(this);
     private Researcher researchSupervisor;
 
     public Student() {
@@ -64,6 +73,43 @@ public class Student extends User {
         return Collections.unmodifiableList(enrollments);
     }
 
+    public Transcript getTranscript() {
+        if (transcript == null) {
+            transcript = new Transcript(this);
+        }
+        return transcript;
+    }
+
+    public List<Mark> viewMarks() {
+        return enrollments.stream()
+                .map(Enrollment::getMark)
+                .filter(mark -> mark != null)
+                .toList();
+    }
+
+    public List<Course> getRegisteredCourses() {
+        return enrollments.stream()
+                .map(Enrollment::getCourse)
+                .toList();
+    }
+
+    public boolean isRegisteredFor(Course course) {
+        if (course == null) {
+            return false;
+        }
+        return enrollments.stream()
+                .anyMatch(enrollment -> enrollment.getCourse().equals(course));
+    }
+
+    public double recalculateGpa() {
+        gpa = getTranscript().calculateGpa();
+        return gpa;
+    }
+
+    public int getCompletedCredits() {
+        return getTranscript().getCompletedCredits();
+    }
+
     public void assignResearchSupervisor(Researcher supervisor) throws LowHIndexException {
         if (year >= 4 && (supervisor == null || supervisor.calculateHIndex() < 3)) {
             throw new LowHIndexException("Fourth-year student supervisor must have h-index at least 3.");
@@ -78,13 +124,31 @@ public class Student extends User {
     public List<StudyMaterial> viewLearningFiles() {
         List<StudyMaterial> materials = new ArrayList<>();
         for (Enrollment enrollment : enrollments) {
-            // The model keeps the relation through courses; full file listing belongs to the service layer.
+            materials.addAll(enrollment.getCourse().getMaterials());
         }
         return materials;
     }
 
     public void solveTask(StudyMaterial task, String solutionText) {
         task.submitSolution(this, solutionText);
+    }
+
+    public void rateTeacher(Teacher teacher, int rating) {
+        if (teacher == null) {
+            throw new IllegalArgumentException("Teacher cannot be null.");
+        }
+        if (rating < 1 || rating > 5) {
+            throw new IllegalArgumentException("Teacher rating must be from 1 to 5.");
+        }
+        teacherRatings.put(teacher.getId(), rating);
+    }
+
+    public Map<Integer, Integer> getTeacherRatings() {
+        return Collections.unmodifiableMap(teacherRatings);
+    }
+
+    public void incrementFailedCourses() {
+        failedCourses++;
     }
 
     public UserType getUserType() {
@@ -109,5 +173,14 @@ public class Student extends User {
 
     public Researcher getResearchSupervisor() {
         return researchSupervisor;
+    }
+
+    @Override
+    public String toString() {
+        return getId() + ": " + getUsername()
+                + " year=" + year
+                + ", gpa=" + String.format(Locale.US, "%.2f", gpa)
+                + ", registeredCredits=" + credits
+                + ", completedCredits=" + getCompletedCredits();
     }
 }
