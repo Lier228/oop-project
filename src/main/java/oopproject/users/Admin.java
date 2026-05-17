@@ -1,39 +1,23 @@
 package oopproject.users;
 
-import java.util.Scanner;
-
 import oopproject.academic.Course;
 import oopproject.core.Log;
 import oopproject.core.University;
 import oopproject.enums.UserType;
-import oopproject.research.Researcher;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import oopproject.academic.Course;
-import oopproject.academic.Enrollment;
-import oopproject.academic.Mark;
 import oopproject.exceptions.AlreadyRegisteredException;
 import oopproject.exceptions.CreditLimitExceededException;
 import oopproject.research.Researcher;
-import oopproject.research.ResearchProject;
-import oopproject.research.ResearchService;
-import oopproject.users.Admin;
-import oopproject.users.Manager;
-import oopproject.users.Student;
-import oopproject.users.Teacher;
-import oopproject.users.User;
-import oopproject.core.University;
 
+import java.util.Optional;
 public class Admin extends User {
 
     University uni = University.getInstance();
+    private static final Admin INSTANCE = new Admin();
 
     public Admin() {
-
+    }
+    public static Admin getInstance() {
+        return INSTANCE;
     }
 
     public Admin(int id, String username, String password, String email) {
@@ -41,7 +25,7 @@ public class Admin extends User {
     }
 
     public boolean addUser(User user) {
-        if (user == null || findUserById(user.getId()).isPresent()) {
+        if (user == null || uni.findUserById(user.getId()).isPresent()) {
             return false;
         }
         uni.getUsers().add(user);
@@ -52,14 +36,14 @@ public class Admin extends User {
         return true;
     }
 
-    public Optional<User> findUserById(int id) {
-        return uni.getUsers().stream()
-                .filter(user -> user.getId() == id)
-                .findFirst();
-    }
+//    public Optional<User> findUserById(int id) {
+//        return uni.getUsers().stream()
+//                .filter(user -> user.getId() == id)
+//                .findFirst();
+//    }
 
     public boolean removeUserById(int id) {
-        Optional<User> user = findUserById(id);
+        Optional<User> user = uni.findUserById(id);
         if (user.isEmpty()) {
             return false;
         }
@@ -72,7 +56,7 @@ public class Admin extends User {
     }
 
     public boolean addCourse(Course course) {
-        if (course == null || findCourseByCode(course.getCode()).isPresent()) {
+        if (course == null || uni.findCourseByCode(course.getCode()).isPresent()) {
             return false;
         }
         uni.getCourses().add(course);
@@ -80,17 +64,17 @@ public class Admin extends User {
         return true;
     }
 
-    public Optional<Course> findCourseByCode(String code) {
-        if (code == null) {
-            return Optional.empty();
-        }
-        return uni.getCourses().stream()
-                .filter(course -> code.equalsIgnoreCase(course.getCode()))
-                .findFirst();
-    }
+//    public Optional<Course> findCourseByCode(String code) {
+//        if (code == null) {
+//            return Optional.empty();
+//        }
+//        return uni.getCourses().stream()
+//                .filter(course -> code.equalsIgnoreCase(course.getCode()))
+//                .findFirst();
+//    }
 
     public boolean removeCourseByCode(String code) {
-        Optional<Course> course = findCourseByCode(code);
+        Optional<Course> course = uni.findCourseByCode(code);
         if (course.isEmpty()) {
             return false;
         }
