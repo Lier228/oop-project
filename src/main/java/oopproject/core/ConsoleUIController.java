@@ -25,6 +25,7 @@ public class ConsoleUIController {
     private final Scanner scanner = new Scanner(System.in);
     private final University university = University.getInstance();
     private final AuthService authService = new AuthService(university);
+    private final Admin admin = Admin.getInstance();
     private User currentUser;
 
     public void start() {
@@ -376,15 +377,15 @@ public class ConsoleUIController {
         if (!university.getUsers().isEmpty()) {
             return;
         }
-        university.addUser(new Admin(1, "admin", "admin", "admin@university.kz"));
-        university.addUser(new Student(2, "student", "student", "student@university.kz", 3.4, 4, 0, 0));
+        admin.addUser(new Admin(1, "admin", "admin", "admin@university.kz"));
+        admin.addUser(new Student(2, "student", "student", "student@university.kz", 3.4, 4, 0, 0));
 
         Teacher professor = new Teacher(3, "professor", "professor", "professor@university.kz",
                 500000, LocalDate.now(), TeacherType.PROFESSOR);
         professor.becomeResearcher("SITE");
-        university.addUser(professor);
+        admin.addUser(professor);
 
-        university.addUser(new Manager(4, "manager", "manager", "manager@university.kz",
+        admin.addUser(new Manager(4, "manager", "manager", "manager@university.kz",
                 400000, LocalDate.now(), ManagerType.OR_MANAGER));
     }
 
@@ -397,8 +398,8 @@ public class ConsoleUIController {
         Course researchMethods = new Course("Research Methods", "RES201", 4);
         oop.setOpen(true);
         researchMethods.setOpen(true);
-        university.addCourse(oop);
-        university.addCourse(researchMethods);
+        admin.addCourse(oop);
+        admin.addCourse(researchMethods);
         university.assignTeacherToCourse(3, "OOP101");
         university.assignTeacherToCourse(3, "RES201");
 
