@@ -7,6 +7,7 @@ import oopproject.academic.Course;
 import oopproject.academic.News;
 import oopproject.academic.Report;
 import oopproject.academic.Request;
+import oopproject.core.University;
 import oopproject.enums.ManagerType;
 import oopproject.enums.ReportType;
 import oopproject.enums.UserType;
@@ -59,14 +60,11 @@ public class Manager extends Employee {
     }
 
     public List<Request> showRequests() {
-        return getRequestInstance();
+        return University.getInstance().getRequests();
     }
 
     public Request findRequestById(long requestId) {
-        return requests.stream()
-                .filter(request -> request.getRequestId() == requestId)
-                .findFirst()
-                .orElse(null);
+        return University.getInstance().findRequestById(requestId).orElse(null);
     }
 
     public Request showRequest(Request request) {
@@ -74,20 +72,16 @@ public class Manager extends Employee {
     }
 
     public void reviewRequest(Request request, boolean status) {
-        if (status) {
-            request.approve();
-        } else {
-            request.reject();
+        if (request != null) {
+            University.getInstance().reviewRequest(this, request.getRequestId(), status);
         }
     }
 
     public void removeRequest(long requestId) {
-        requests.removeIf(request -> request.getRequestId() == requestId);
+        University.getInstance().removeRequest(this, requestId);
     }
 
     public List<Request> showFinishedRequests() {
-        return requests.stream()
-                .filter(request -> request.getStatus() != oopproject.enums.RequestStatus.PENDING)
-                .toList();
+        return University.getInstance().getFinishedRequests();
     }
 }

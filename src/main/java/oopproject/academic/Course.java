@@ -15,7 +15,6 @@ public class Course implements Serializable {
     private String code;
     private int credits;
     private boolean open;
-    private final List<Student> students = new ArrayList<>();
     private final List<Teacher> instructors = new ArrayList<>();
     private final List<Lesson> lessons = new ArrayList<>();
     private final List<StudyMaterial> materials = new ArrayList<>();
@@ -28,8 +27,7 @@ public class Course implements Serializable {
     }
 
     public void addStudent(Student student) {
-        if (student != null && !students.contains(student)) {
-            students.add(student);
+        if (student != null && findEnrollment(student) == null) {
             enrollments.add(new Enrollment(student, this));
         }
     }
@@ -93,10 +91,6 @@ public class Course implements Serializable {
 
     public void setOpen(boolean open) {
         this.open = open;
-    }
-
-    public List<Student> getStudents() {
-        return Collections.unmodifiableList(students);
     }
 
     public List<Teacher> getInstructors() {

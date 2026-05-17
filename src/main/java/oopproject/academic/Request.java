@@ -24,7 +24,7 @@ public class Request implements Serializable {
         this.requestId = requestIdCounter++;
         this.senderId = senderId;
         this.type = type;
-        this.status = status;
+        this.status = status == null ? RequestStatus.PENDING : status;
         this.description = description;
     }
 
@@ -40,7 +40,34 @@ public class Request implements Serializable {
         return requestId;
     }
 
+    public int getSenderId() {
+        return senderId;
+    }
+
+    public RequestType getType() {
+        return type;
+    }
+
     public RequestStatus getStatus() {
         return status;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public static void ensureNextIdAbove(long requestId) {
+        if (requestIdCounter <= requestId) {
+            requestIdCounter = requestId + 1;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Request{id=" + requestId
+                + ", senderId=" + senderId
+                + ", type=" + type
+                + ", status=" + status
+                + ", description='" + description + "'}";
     }
 }

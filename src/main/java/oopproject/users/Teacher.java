@@ -6,8 +6,9 @@ import java.util.Collections;
 import java.util.List;
 import oopproject.academic.Course;
 import oopproject.academic.Enrollment;
-import oopproject.academic.Mark;
+import oopproject.academic.Marks;
 import oopproject.academic.StudyMaterial;
+import oopproject.core.University;
 import oopproject.enums.TeacherType;
 import oopproject.enums.UserType;
 import oopproject.research.ResearchPaper;
@@ -32,12 +33,34 @@ public class Teacher extends Employee implements Researcher {
         this.researcher = title == TeacherType.PROFESSOR;
     }
 
-    public void putMark(Enrollment enrollment, Mark mark) {
-        enrollment.setMark(mark);
+    public boolean putMark(Student student, Course course, Marks marks) {
+        if (student == null || course == null || marks == null) {
+            return false;
+        }
+        if (!course.getInstructors().contains(this)) {
+            System.out.println("Teacher is not assigned to this course.");
+            return false;
+        }
+        Enrollment enrollment = course.findEnrollment(student);
+        if (enrollment == null) {
+            return false;
+        }
+        if (enrollment.getMarks() == null) {
+            enrollment.setMarks(marks);
+        } else {
+            enrollment.getMarks().mergeFrom(marks);
+        }
+        University.getInstance().addLog(this, "MARK_PUT " + course.getCode() + " studentId=" + student.getId());
+        return true;
     }
 
     public List<Student> viewStudents(Course course) {
-        return course.getStudents();
+        if (course == null) {
+            return List.of();
+        }
+        return course.getEnrollments().stream()
+                .map(Enrollment::getStudent)
+                .toList();
     }
 
     public void uploadMaterial(StudyMaterial material, Course course) {
@@ -48,10 +71,14 @@ public class Teacher extends Employee implements Researcher {
         return new StudyMaterial(title, description, fileName, deadline, true, this, course);
     }
 
-    public void gradeSubmission(Student student, StudyMaterial material, Mark mark, Course course) {
+    public void gradeSubmission(Student student, StudyMaterial material, Marks marks, Course course) {
         Enrollment enrollment = course.findEnrollment(student);
         if (enrollment != null) {
-            enrollment.setMark(mark);
+            if (enrollment.getMarks() == null) {
+                enrollment.setMarks(marks);
+            } else {
+                enrollment.getMarks().mergeFrom(marks);
+            }
         }
     }
 
@@ -74,6 +101,11 @@ public class Teacher extends Employee implements Researcher {
         researchPapers.add(paper);
         paper.addAuthor(this);
         return true;
+    }
+
+    @Override
+    public int calculateHIndex() {
+        return Researcher.super.calculateHIndex();
     }
 
     @Override
