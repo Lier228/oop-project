@@ -25,7 +25,7 @@ public class University implements Serializable {
     private static final University INSTANCE = new University();
 
     private String name = "Research-Oriented University";
-    private final List<User> users = new ArrayList<>();
+    public final List<User> users = new ArrayList<>(); //
     private final List<Course> courses = new ArrayList<>();
     private final List<Researcher> researchers = new ArrayList<>();
     private final List<ResearchProject> projects = new ArrayList<>();
@@ -38,102 +38,102 @@ public class University implements Serializable {
         return INSTANCE;
     }
 
-    public boolean addUser(User user) {
-        if (user == null || findUserById(user.getId()).isPresent() || findUserByUsername(user.getUsername()).isPresent()) {
-            return false;
-        }
-        users.add(user);
-        if (user instanceof Researcher researcher && researcher.isResearcher()) {
-            addResearcher(researcher);
-        }
-        addLog(user, "USER_REGISTERED");
-        return true;
-    }
+//    public boolean addUser(User user) {
+//        if (user == null || findUserById(user.getId()).isPresent() || findUserByUsername(user.getUsername()).isPresent()) {
+//            return false;
+//        }
+//        users.add(user);
+//        if (user instanceof Researcher researcher && researcher.isResearcher()) {
+//            addResearcher(researcher);
+//        }
+//        addLog(user, "USER_REGISTERED");
+//        return true;
+//    }
 
-    public boolean addCourse(Course course) {
-        if (course == null || findCourseByCode(course.getCode()).isPresent()) {
-            return false;
-        }
-        courses.add(course);
-        addLog(null, "COURSE_ADDED " + course.getCode());
-        return true;
-    }
+//    public boolean addCourse(Course course) {
+//        if (course == null || findCourseByCode(course.getCode()).isPresent()) {
+//            return false;
+//        }
+//        courses.add(course);
+//        addLog(null, "COURSE_ADDED " + course.getCode());
+//        return true;
+//    }
 
-    public boolean openCourseForRegistration(String code) {
-        Optional<Course> course = findCourseByCode(code);
-        if (course.isEmpty()) {
-            return false;
-        }
-        course.get().setOpen(true);
-        addLog(null, "COURSE_OPENED " + course.get().getCode());
-        return true;
-    }
+//    public boolean openCourseForRegistration(String code) {
+//        Optional<Course> course = findCourseByCode(code);
+//        if (course.isEmpty()) {
+//            return false;
+//        }
+//        course.get().setOpen(true);
+//        addLog(null, "COURSE_OPENED " + course.get().getCode());
+//        return true;
+//    }
+//
+//    public boolean closeCourseForRegistration(String code) {
+//        Optional<Course> course = findCourseByCode(code);
+//        if (course.isEmpty()) {
+//            return false;
+//        }
+//        course.get().setOpen(false);
+//        addLog(null, "COURSE_CLOSED " + course.get().getCode());
+//        return true;
+//    }
+//
+//    public boolean assignTeacherToCourse(int teacherId, String courseCode) {
+//        Optional<User> user = findUserById(teacherId);
+//        Optional<Course> course = findCourseByCode(courseCode);
+//        if (user.isEmpty() || course.isEmpty() || !(user.get() instanceof Teacher teacher)) {
+//            return false;
+//        }
+//        teacher.addCourse(course.get());
+//        addLog(teacher, "TEACHER_ASSIGNED " + course.get().getCode());
+//        return true;
+//    }
+//
+//    public boolean registerStudentToCourse(int studentId, String courseCode)
+//            throws CreditLimitExceededException, AlreadyRegisteredException {
+//        Optional<User> user = findUserById(studentId);
+//        Optional<Course> course = findCourseByCode(courseCode);
+//        if (user.isEmpty() || course.isEmpty() || !(user.get() instanceof Student student)) {
+//            return false;
+//        }
+//        student.registerCourse(course.get());
+//        addLog(student, "COURSE_REGISTERED " + course.get().getCode());
+//        return true;
+//    }
+//
+//    public boolean putMark(int teacherId, int studentId, String courseCode, Mark mark) {
+//        Optional<User> teacherUser = findUserById(teacherId);
+//        Optional<User> studentUser = findUserById(studentId);
+//        Optional<Course> course = findCourseByCode(courseCode);
+//        if (teacherUser.isEmpty()
+//                || studentUser.isEmpty()
+//                || course.isEmpty()
+//                || !(teacherUser.get() instanceof Teacher teacher)
+//                || !(studentUser.get() instanceof Student student)
+//                || mark == null) {
+//            return false;
+//        }
+//        if (!course.get().getInstructors().contains(teacher)) {
+//            return false;
+//        }
+//        Enrollment enrollment = course.get().findEnrollment(student);
+//        if (enrollment == null) {
+//            return false;
+//        }
+//        teacher.putMark(enrollment, mark);
+//        addLog(teacher, "MARK_PUT " + course.get().getCode() + " studentId=" + student.getId());
+//        return true;
+//    }
 
-    public boolean closeCourseForRegistration(String code) {
-        Optional<Course> course = findCourseByCode(code);
-        if (course.isEmpty()) {
-            return false;
-        }
-        course.get().setOpen(false);
-        addLog(null, "COURSE_CLOSED " + course.get().getCode());
-        return true;
-    }
-
-    public boolean assignTeacherToCourse(int teacherId, String courseCode) {
-        Optional<User> user = findUserById(teacherId);
-        Optional<Course> course = findCourseByCode(courseCode);
-        if (user.isEmpty() || course.isEmpty() || !(user.get() instanceof Teacher teacher)) {
-            return false;
-        }
-        teacher.addCourse(course.get());
-        addLog(teacher, "TEACHER_ASSIGNED " + course.get().getCode());
-        return true;
-    }
-
-    public boolean registerStudentToCourse(int studentId, String courseCode)
-            throws CreditLimitExceededException, AlreadyRegisteredException {
-        Optional<User> user = findUserById(studentId);
-        Optional<Course> course = findCourseByCode(courseCode);
-        if (user.isEmpty() || course.isEmpty() || !(user.get() instanceof Student student)) {
-            return false;
-        }
-        student.registerCourse(course.get());
-        addLog(student, "COURSE_REGISTERED " + course.get().getCode());
-        return true;
-    }
-
-    public boolean putMark(int teacherId, int studentId, String courseCode, Mark mark) {
-        Optional<User> teacherUser = findUserById(teacherId);
-        Optional<User> studentUser = findUserById(studentId);
-        Optional<Course> course = findCourseByCode(courseCode);
-        if (teacherUser.isEmpty()
-                || studentUser.isEmpty()
-                || course.isEmpty()
-                || !(teacherUser.get() instanceof Teacher teacher)
-                || !(studentUser.get() instanceof Student student)
-                || mark == null) {
-            return false;
-        }
-        if (!course.get().getInstructors().contains(teacher)) {
-            return false;
-        }
-        Enrollment enrollment = course.get().findEnrollment(student);
-        if (enrollment == null) {
-            return false;
-        }
-        teacher.putMark(enrollment, mark);
-        addLog(teacher, "MARK_PUT " + course.get().getCode() + " studentId=" + student.getId());
-        return true;
-    }
-
-    public boolean addResearcher(Researcher researcher) {
-        if (researcher == null || !researcher.isResearcher() || researchers.contains(researcher)) {
-            return false;
-        }
-        researchers.add(researcher);
-        addLog(null, "RESEARCHER_REGISTERED " + researcher.getResearcherName());
-        return true;
-    }
+//    public boolean addResearcher(Researcher researcher) {
+//        if (researcher == null || !researcher.isResearcher() || researchers.contains(researcher)) {
+//            return false;
+//        }
+//        researchers.add(researcher);
+//        addLog(null, "RESEARCHER_REGISTERED " + researcher.getResearcherName());
+//        return true;
+//    }
 
     public boolean addProject(ResearchProject project) {
         if (project == null || findProjectByTopic(project.getTopic()).isPresent()) {
@@ -144,52 +144,52 @@ public class University implements Serializable {
         return true;
     }
 
-    public boolean removeUserById(int id) {
-        Optional<User> user = findUserById(id);
-        if (user.isEmpty()) {
-            return false;
-        }
-        users.remove(user.get());
-        if (user.get() instanceof Researcher researcher) {
-            researchers.remove(researcher);
-        }
-        addLog(user.get(), "USER_REMOVED");
-        return true;
-    }
+//    public boolean removeUserById(int id) {
+//        Optional<User> user = findUserById(id);
+//        if (user.isEmpty()) {
+//            return false;
+//        }
+//        users.remove(user.get());
+//        if (user.get() instanceof Researcher researcher) {
+//            researchers.remove(researcher);
+//        }
+//        addLog(user.get(), "USER_REMOVED");
+//        return true;
+//    }
 
-    public boolean removeCourseByCode(String code) {
-        Optional<Course> course = findCourseByCode(code);
-        if (course.isEmpty()) {
-            return false;
-        }
-        courses.remove(course.get());
-        addLog(null, "COURSE_REMOVED " + course.get().getCode());
-        return true;
-    }
+//    public boolean removeCourseByCode(String code) {
+//        Optional<Course> course = findCourseByCode(code);
+//        if (course.isEmpty()) {
+//            return false;
+//        }
+//        courses.remove(course.get());
+//        addLog(null, "COURSE_REMOVED " + course.get().getCode());
+//        return true;
+//    }
 
-    public Optional<User> findUserById(int id) {
-        return users.stream()
-                .filter(user -> user.getId() == id)
-                .findFirst();
-    }
+//    public Optional<User> findUserById(int id) {
+//        return users.stream()
+//                .filter(user -> user.getId() == id)
+//                .findFirst();
+//    }
 
-    public Optional<User> findUserByUsername(String username) {
-        if (username == null) {
-            return Optional.empty();
-        }
-        return users.stream()
-                .filter(user -> username.equalsIgnoreCase(user.getUsername()))
-                .findFirst();
-    }
+//    public Optional<User> findUserByUsername(String username) {
+//        if (username == null) {
+//            return Optional.empty();
+//        }
+//        return users.stream()
+//                .filter(user -> username.equalsIgnoreCase(user.getUsername()))
+//                .findFirst();
+//    }
 
-    public Optional<Course> findCourseByCode(String code) {
-        if (code == null) {
-            return Optional.empty();
-        }
-        return courses.stream()
-                .filter(course -> code.equalsIgnoreCase(course.getCode()))
-                .findFirst();
-    }
+//    public Optional<Course> findCourseByCode(String code) {
+//        if (code == null) {
+//            return Optional.empty();
+//        }
+//        return courses.stream()
+//                .filter(course -> code.equalsIgnoreCase(course.getCode()))
+//                .findFirst();
+//    }
 
     public Optional<ResearchProject> findProjectByTopic(String topic) {
         if (topic == null) {
