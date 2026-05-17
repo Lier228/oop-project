@@ -1,11 +1,36 @@
 package oopproject.users;
 
 import java.util.Scanner;
+
+import oopproject.academic.Course;
+import oopproject.core.Log;
 import oopproject.core.University;
 import oopproject.enums.UserType;
+import oopproject.research.Researcher;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import oopproject.academic.Course;
+import oopproject.academic.Enrollment;
+import oopproject.academic.Mark;
+import oopproject.exceptions.AlreadyRegisteredException;
+import oopproject.exceptions.CreditLimitExceededException;
+import oopproject.research.Researcher;
+import oopproject.research.ResearchProject;
+import oopproject.research.ResearchService;
+import oopproject.users.Admin;
+import oopproject.users.Manager;
+import oopproject.users.Student;
+import oopproject.users.Teacher;
+import oopproject.users.User;
+import oopproject.core.University;
 
 public class Admin extends User {
-    private final Scanner sc = new Scanner(System.in);
+
+    University uni = University.getInstance();
 
     public Admin() {
 
@@ -15,53 +40,75 @@ public class Admin extends User {
         super(id, username, password, email);
     }
 
-    public void addUser() {
-        System.out.print("Username: ");
-        String username = sc.nextLine();
-
-        System.out.print("Password: ");
-        String password = sc.nextLine();
-
-        System.out.print("Email: ");
-        String email = sc.nextLine();
-
-        System.out.println("Type: 1-Admin 2-Student 3-Teacher 4-Manager");
-        int typeChoice = Integer.parseInt(sc.nextLine());
-        UserType type = UserType.STUDENT;
-        if(typeChoice == 1) type = UserType.ADMIN;
-        if(typeChoice == 3) type = UserType.TEACHER;
-        if(typeChoice == 4) type = UserType.MANAGER;
-
-        User user = UserFactory.createUser(type, 100 + University.getInstance().users.size(), username, password, email);
-        University.getInstance().users.add(user);
-        System.out.println("User added: " + user.username);
+    public boolean addUser(User user) {
+        if (user == null || findUserById(user.getId()).isPresent()) {
+            return false;
+        }
+        uni.getUsers().add(user);
+        if (user instanceof Researcher researcher && researcher.isResearcher()) {
+            addResearcher(researcher);
+        }
+        uni.addLog(user, "USER_REGISTERED");
+        return true;
     }
 
-    public void removeUser() {
-
-        System.out.print("Username: ");
-        String username = sc.nextLine();
-
-        University uni = University.getInstance();
-
-        User target = null;
-
-        for (User u : uni.users) {
-            if (u.username.equals(username)) {
-                target = u;
-                break;
-            }
-        }
-
-        if (target == null) {
-            System.out.println("User not found");
-            return;
-        }
-
-        uni.users.remove(target);
-
-        System.out.println("User removed: " + target);
+    public Optional<User> findUserById(int id) {
+        return uni.getUsers().stream()
+                .filter(user -> user.getId() == id)
+                .findFirst();
     }
+
+    public boolean removeUserById(int id) {
+        Optional<User> user = findUserById(id);
+        if (user.isEmpty()) {
+            return false;
+        }
+        uni.getUsers().remove(user.get());
+        if (user.get() instanceof Researcher researcher) {
+            uni.getResearchers().remove(researcher);
+        }
+        uni.addLog(user.get(), "USER_REMOVED");
+        return true;
+    }
+
+    public boolean addCourse(Course course) {
+        if (course == null || findCourseByCode(course.getCode()).isPresent()) {
+            return false;
+        }
+        uni.getCourses().add(course);
+        uni.addLog(null, "COURSE_ADDED " + course.getCode());
+        return true;
+    }
+
+    public Optional<Course> findCourseByCode(String code) {
+        if (code == null) {
+            return Optional.empty();
+        }
+        return uni.getCourses().stream()
+                .filter(course -> code.equalsIgnoreCase(course.getCode()))
+                .findFirst();
+    }
+
+    public boolean removeCourseByCode(String code) {
+        Optional<Course> course = findCourseByCode(code);
+        if (course.isEmpty()) {
+            return false;
+        }
+        uni.getCourses().remove(course.get());
+        uni.addLog(null, "COURSE_REMOVED " + course.get().getCode());
+        return true;
+    }
+
+    public boolean addResearcher(Researcher researcher) {
+        if (researcher == null || !researcher.isResearcher() || uni.getResearchers().contains(researcher)) {
+            return false;
+        }
+        uni.getResearchers().add(researcher);
+        uni.addLog(null, "RESEARCHER_REGISTERED " + researcher.getResearcherName());
+        return true;
+    }
+
+    // Доделать то что ниже:
 
     public void updateLogs() {
         System.out.println("Logs updated");
