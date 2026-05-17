@@ -1,0 +1,126 @@
+package oopproject.academic;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import oopproject.users.Student;
+import oopproject.users.Teacher;
+
+public class Course implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String name;
+    private String code;
+    private int credits;
+    private boolean open;
+    private final List<Student> students = new ArrayList<>();
+    private final List<Teacher> instructors = new ArrayList<>();
+    private final List<Lesson> lessons = new ArrayList<>();
+    private final List<StudyMaterial> materials = new ArrayList<>();
+    private final List<Enrollment> enrollments = new ArrayList<>();
+
+    public Course(String name, String code, int credits) {
+        this.name = name;
+        this.code = code;
+        this.credits = credits;
+    }
+
+    public void addStudent(Student student) {
+        if (student != null && !students.contains(student)) {
+            students.add(student);
+            enrollments.add(new Enrollment(student, this));
+        }
+    }
+
+    public void addInstructor(Teacher teacher) {
+        if (teacher != null && !instructors.contains(teacher)) {
+            instructors.add(teacher);
+        }
+    }
+
+    public void addLesson(Lesson lesson) {
+        if (lesson != null) {
+            lessons.add(lesson);
+        }
+    }
+
+    public void addMaterial(StudyMaterial material) {
+        if (material != null) {
+            materials.add(material);
+        }
+    }
+
+    public Enrollment findEnrollment(Student student) {
+        return enrollments.stream()
+                .filter(enrollment -> enrollment.getStudent().equals(student))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public boolean isStudentEnrolled(Student student) {
+        return findEnrollment(student) != null;
+    }
+
+    public List<Enrollment> getEnrollments() {
+        return Collections.unmodifiableList(enrollments);
+    }
+
+    public List<Lesson> getLessons() {
+        return Collections.unmodifiableList(lessons);
+    }
+
+    public List<StudyMaterial> getMaterials() {
+        return Collections.unmodifiableList(materials);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public int getCredits() {
+        return credits;
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
+    }
+
+    public List<Student> getStudents() {
+        return Collections.unmodifiableList(students);
+    }
+
+    public List<Teacher> getInstructors() {
+        return Collections.unmodifiableList(instructors);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof Course course)) {
+            return false;
+        }
+        return Objects.equals(code, course.code);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(code);
+    }
+
+    @Override
+    public String toString() {
+        return code + " - " + name + " (" + credits + " credits, open=" + open + ")";
+    }
+}

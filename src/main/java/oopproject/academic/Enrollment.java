@@ -1,0 +1,42 @@
+package oopproject.academic;
+
+import java.io.Serializable;
+import oopproject.users.Student;
+
+public class Enrollment implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private Student student;
+    private Course course;
+    private Mark mark;
+
+    public Enrollment() {
+    }
+
+    public Enrollment(Student student, Course course) {
+        this.student = student;
+        this.course = course;
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public Mark getMark() {
+        return mark;
+    }
+
+    public void setMark(Mark mark) {
+        this.mark = mark;
+    }
+
+    @Override
+    public String toString() {
+        String markText = mark == null ? "not graded" : mark.toString();
+        return course.getCode() + " - " + course.getName() + ": " + markText;
+    }
+}
