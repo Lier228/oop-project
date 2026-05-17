@@ -33,7 +33,6 @@ public class University implements Serializable, MessageMediator {
     private final List<Researcher> researchers = new ArrayList<>();
     private final List<ResearchProject> projects = new ArrayList<>();
     private final List<Request> requests = new ArrayList<>();
-    private final List<Message> messages = new ArrayList<>();
     private final List<Log> logs = new ArrayList<>();
 
     private University() {
@@ -133,6 +132,9 @@ public class University implements Serializable, MessageMediator {
                 || findUserById(sender.getId()).isEmpty()) {
             return false;
         }
+        if (type == RequestType.COMPLAIN && !(sender instanceof Student || sender instanceof Teacher)) {
+            return false;
+        }
         requests.add(new Request(sender.getId(), type, RequestStatus.PENDING, description));
         addLog(sender, "REQUEST_SUBMITTED " + type);
         return true;
@@ -144,20 +146,13 @@ public class University implements Serializable, MessageMediator {
                 .findFirst();
     }
 
-    public boolean reviewRequest(User reviewer, long requestId, boolean approved) {
-        Optional<Request> request = findRequestById(requestId);
-        if (reviewer == null
-                || request.isEmpty()
-                || !(reviewer instanceof Manager || reviewer instanceof Admin)) {
-            return false;
+    public List<Request> getRequestsBySender(User sender) {
+        if (sender == null) {
+            return Collections.emptyList();
         }
-        if (approved) {
-            request.get().approve();
-        } else {
-            request.get().reject();
-        }
-        addLog(reviewer, "REQUEST_REVIEWED id=" + requestId + " status=" + request.get().getStatus());
-        return true;
+        return requests.stream()
+                .filter(request -> request.getSenderId() == sender.getId())
+                .toList();
     }
 
     public boolean removeRequest(User actor, long requestId) {
@@ -191,7 +186,6 @@ public class University implements Serializable, MessageMediator {
         }
 
         Message message = new Message(registeredSender, registeredRecipient, content);
-        messages.add(message);
         registeredRecipient.receiveMessage(message);
         addLog(registeredSender, "DIRECT_MESSAGE_SENT to=" + registeredRecipient.getUsername());
         return true;
@@ -295,7 +289,6 @@ public class University implements Serializable, MessageMediator {
         researchers.clear();
         projects.clear();
         requests.clear();
-        messages.clear();
         logs.clear();
     }
 
@@ -312,9 +305,6 @@ public class University implements Serializable, MessageMediator {
         if (saved.requests != null) {
             requests.addAll(saved.requests);
             saved.requests.forEach(request -> Request.ensureNextIdAbove(request.getRequestId()));
-        }
-        if (saved.messages != null) {
-            messages.addAll(saved.messages);
         }
         logs.addAll(saved.logs);
     }
@@ -361,10 +351,6 @@ public class University implements Serializable, MessageMediator {
         return requests.stream()
                 .filter(request -> request.getStatus() != RequestStatus.PENDING)
                 .toList();
-    }
-
-    public List<Message> getMessages() {
-        return Collections.unmodifiableList(messages);
     }
 
     public List<Log> getLogs() {

@@ -8,8 +8,10 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 import oopproject.academic.News;
+import oopproject.academic.Request;
 import oopproject.core.Message;
 import oopproject.core.MessageMediator;
+import oopproject.core.University;
 import oopproject.enums.UserType;
 
 public abstract class User implements Serializable {
@@ -112,6 +114,10 @@ public abstract class User implements Serializable {
 
     public List<Message> getInboxMessages() {
         return Collections.unmodifiableList(new ArrayList<>(directMessageInbox()));
+    }
+
+    public List<Request> viewCreatedRequests() {
+        return University.getInstance().getRequestsBySender(this);
     }
 
     private Deque<Message> directMessageInbox() {

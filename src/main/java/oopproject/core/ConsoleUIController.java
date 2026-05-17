@@ -387,14 +387,24 @@ public class ConsoleUIController {
             System.out.println("1. View news");
             System.out.println("2. View direct messages");
             System.out.println("3. Send direct message");
-            System.out.println("4. Submit complaint");
+            System.out.println("4. View my requests");
+            if (canCurrentUserSubmitComplaint()) {
+                System.out.println("5. Submit complaint");
+            }
             System.out.println("0. Back");
             int choice = readInt();
             switch (choice) {
                 case 1 -> viewInboxNews();
                 case 2 -> viewDirectMessages();
                 case 3 -> sendDirectMessage();
-                case 4 -> submitComplaint();
+                case 4 -> viewMyRequests();
+                case 5 -> {
+                    if (canCurrentUserSubmitComplaint()) {
+                        submitComplaint();
+                    } else {
+                        System.out.println("Unknown option.");
+                    }
+                }
                 case 0 -> inMenu = false;
                 default -> System.out.println("Unknown option.");
             }
@@ -438,6 +448,10 @@ public class ConsoleUIController {
     }
 
     private void submitComplaint() {
+        if (!canCurrentUserSubmitComplaint()) {
+            System.out.println("Only students and teachers can submit complaints.");
+            return;
+        }
         System.out.print("Complaint description: ");
         String description = scanner.nextLine();
         if (university.submitRequest(currentUser, RequestType.COMPLAIN, description)) {
@@ -445,6 +459,10 @@ public class ConsoleUIController {
         } else {
             System.out.println("Could not submit complaint.");
         }
+    }
+
+    private void viewMyRequests() {
+        printRequests(currentUser.viewCreatedRequests());
     }
 
     private void requestReviewMenu() {
@@ -457,8 +475,10 @@ public class ConsoleUIController {
             System.out.println("1. View all requests");
             System.out.println("2. View pending requests");
             System.out.println("3. View finished requests");
-            System.out.println("4. Review request");
-            System.out.println("5. Remove request");
+            System.out.println("4. Approve request");
+            System.out.println("5. Reject request");
+            System.out.println("6. Comment request");
+            System.out.println("7. Remove request");
             System.out.println("0. Back");
             int choice = readInt();
             switch (choice) {
@@ -467,8 +487,10 @@ public class ConsoleUIController {
                         .filter(request -> request.getStatus() == RequestStatus.PENDING)
                         .toList());
                 case 3 -> printRequests(manager.showFinishedRequests());
-                case 4 -> reviewRequest(manager);
-                case 5 -> removeRequest(manager);
+                case 4 -> approveRequest(manager);
+                case 5 -> rejectRequest(manager);
+                case 6 -> commentRequest(manager);
+                case 7 -> removeRequest(manager);
                 case 0 -> inMenu = false;
                 default -> System.out.println("Unknown option.");
             }
@@ -483,7 +505,7 @@ public class ConsoleUIController {
         requests.forEach(System.out::println);
     }
 
-    private void reviewRequest(Manager manager) {
+    private void approveRequest(Manager manager) {
         printRequests(manager.showRequests());
         System.out.print("Request id: ");
         long requestId = readLong();
@@ -492,14 +514,44 @@ public class ConsoleUIController {
             System.out.println("Request not found.");
             return;
         }
-        System.out.println("1. Approve");
-        System.out.println("2. Reject");
-        int choice = readInt();
-        if (choice == 1 || choice == 2) {
-            manager.reviewRequest(request, choice == 1);
-            System.out.println("Request updated.");
+        if (manager.approveRequest(request)) {
+            System.out.println("Request approved.");
         } else {
-            System.out.println("Unknown option.");
+            System.out.println("Could not approve request.");
+        }
+    }
+
+    private void rejectRequest(Manager manager) {
+        printRequests(manager.showRequests());
+        System.out.print("Request id: ");
+        long requestId = readLong();
+        Request request = manager.findRequestById(requestId);
+        if (request == null) {
+            System.out.println("Request not found.");
+            return;
+        }
+        if (manager.rejectRequest(request)) {
+            System.out.println("Request rejected.");
+        } else {
+            System.out.println("Could not reject request.");
+        }
+    }
+
+    private void commentRequest(Manager manager) {
+        printRequests(manager.showRequests());
+        System.out.print("Request id: ");
+        long requestId = readLong();
+        Request request = manager.findRequestById(requestId);
+        if (request == null) {
+            System.out.println("Request not found.");
+            return;
+        }
+        System.out.print("Response comment: ");
+        String comment = scanner.nextLine();
+        if (manager.commentRequest(request, comment)) {
+            System.out.println("Comment added.");
+        } else {
+            System.out.println("Could not add comment.");
         }
     }
 
@@ -513,6 +565,10 @@ public class ConsoleUIController {
         }
         manager.removeRequest(requestId);
         System.out.println(manager.findRequestById(requestId) == null ? "Request removed." : "Could not remove request.");
+    }
+
+    private boolean canCurrentUserSubmitComplaint() {
+        return currentUser instanceof Student || currentUser instanceof Teacher;
     }
 
     private void manageCourseMenu() {

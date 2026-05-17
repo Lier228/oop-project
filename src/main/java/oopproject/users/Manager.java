@@ -71,10 +71,31 @@ public class Manager extends Employee {
         return request;
     }
 
-    public void reviewRequest(Request request, boolean status) {
-        if (request != null) {
-            University.getInstance().reviewRequest(this, request.getRequestId(), status);
+    public boolean approveRequest(Request request) {
+        if (!isManagedRequest(request)) {
+            return false;
         }
+        request.approve();
+        University.getInstance().addLog(this, "REQUEST_APPROVED id=" + request.getRequestId());
+        return true;
+    }
+
+    public boolean rejectRequest(Request request) {
+        if (!isManagedRequest(request)) {
+            return false;
+        }
+        request.reject();
+        University.getInstance().addLog(this, "REQUEST_REJECTED id=" + request.getRequestId());
+        return true;
+    }
+
+    public boolean commentRequest(Request request, String comment) {
+        if (!isManagedRequest(request) || comment == null || comment.isBlank()) {
+            return false;
+        }
+        request.setResponseComment(comment);
+        University.getInstance().addLog(this, "REQUEST_COMMENTED id=" + request.getRequestId());
+        return true;
     }
 
     public void removeRequest(long requestId) {
@@ -83,5 +104,9 @@ public class Manager extends Employee {
 
     public List<Request> showFinishedRequests() {
         return University.getInstance().getFinishedRequests();
+    }
+
+    private boolean isManagedRequest(Request request) {
+        return request != null && University.getInstance().findRequestById(request.getRequestId()).isPresent();
     }
 }

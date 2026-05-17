@@ -13,6 +13,7 @@ public class Request implements Serializable {
     private RequestType type;
     private RequestStatus status;
     private String description;
+    private String responseComment;
     private long requestId;
 
     public Request() {
@@ -36,6 +37,10 @@ public class Request implements Serializable {
         status = RequestStatus.REJECTED;
     }
 
+    public void setResponseComment(String responseComment) {
+        this.responseComment = responseComment;
+    }
+
     public long getRequestId() {
         return requestId;
     }
@@ -56,6 +61,10 @@ public class Request implements Serializable {
         return description;
     }
 
+    public String getResponseComment() {
+        return responseComment;
+    }
+
     public static void ensureNextIdAbove(long requestId) {
         if (requestIdCounter <= requestId) {
             requestIdCounter = requestId + 1;
@@ -68,6 +77,7 @@ public class Request implements Serializable {
                 + ", senderId=" + senderId
                 + ", type=" + type
                 + ", status=" + status
-                + ", description='" + description + "'}";
+                + ", description='" + description + "'"
+                + ", responseComment='" + responseComment + "'}";
     }
 }
