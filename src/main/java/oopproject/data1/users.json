@@ -1,0 +1,69 @@
+[
+  {
+    "type": "ADMIN",
+    "id": 1,
+    "username": "admin",
+    "password": "123",
+    "email": "admin@uni.kz"
+  },
+
+  {
+    "type": "TEACHER",
+    "id": 2,
+    "username": "dr_smith",
+    "password": "teacher123",
+    "email": "smith@uni.kz",
+
+    "salary": 850000,
+    "hireDate": "2020-09-01",
+
+    "title": "PROFESSOR",
+    "researcher": true,
+    "researchSchool": "Computer Science"
+  },
+
+  {
+    "type": "MANAGER",
+    "id": 3,
+    "username": "manager1",
+    "password": "manager123",
+    "email": "manager@uni.kz",
+
+    "salary": 650000,
+    "hireDate": "2021-03-15",
+
+    "typeManager": "OR_MANAGER"
+  },
+
+  {
+    "type": "STUDENT",
+    "id": 100,
+    "username": "alice",
+    "password": "student123",
+    "email": "alice@uni.kz",
+
+    "gpa": 3.72,
+    "year": 2,
+    "credits": 18,
+    "failedCourses": 1,
+
+    "userType": "STUDENT",
+
+    "schedule": {
+      "lessons": []
+    },
+
+    "enrollments": [],
+
+    "teacherRatings": {
+      "2": 5,
+      "7": 4
+    },
+
+    "transcript": {
+      "marks": []
+    },
+
+    "researchSupervisorId": 2
+  }
+]
