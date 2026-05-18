@@ -130,6 +130,8 @@ public final class DataStore {
                     .append("\"code\": \"").append(escape(course.getCode())).append("\", ")
                     .append("\"name\": \"").append(escape(course.getName())).append("\", ")
                     .append("\"credits\": ").append(course.getCredits()).append(", ")
+                    .append("\"targetMajor\": \"").append(escape(course.getTargetMajor())).append("\", ")
+                    .append("\"targetYear\": ").append(course.getTargetYear() == null ? "null" : course.getTargetYear()).append(", ")
                     .append("\"studentIds\": ").append(userIds(course.getEnrollments().stream()
                             .map(Enrollment::getStudent)
                             .toList())).append(", ")

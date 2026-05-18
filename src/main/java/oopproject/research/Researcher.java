@@ -2,8 +2,10 @@ package oopproject.research;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import oopproject.enums.ResearchSortType;
 
 public interface Researcher extends Serializable {
@@ -17,6 +19,16 @@ public interface Researcher extends Serializable {
 
     default boolean isResearcher() {
         return true;
+    }
+
+    default Set<ResearchProject> getResearchProjects() {
+        return Collections.emptySet();
+    }
+
+    default void attachResearchProject(ResearchProject project) {
+    }
+
+    default void detachResearchProject(ResearchProject project) {
     }
 
     default String getResearchSchool() {

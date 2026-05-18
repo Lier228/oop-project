@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import oopproject.academic.Course;
-import oopproject.academic.Enrollment;
-import oopproject.academic.Marks;
 import oopproject.academic.Request;
 import oopproject.enums.RequestStatus;
 import oopproject.enums.RequestType;
@@ -19,6 +17,7 @@ import oopproject.research.ResearchProject;
 import oopproject.research.ResearchService;
 import oopproject.research.Researcher;
 import oopproject.users.Admin;
+import oopproject.users.Employee;
 import oopproject.users.Manager;
 import oopproject.users.Student;
 import oopproject.users.Teacher;
@@ -108,25 +107,6 @@ public class University implements Serializable, MessageMediator {
         return true;
     }
 
-    public boolean putMark(int teacherId, int studentId, String courseCode, Marks marks) {
-        Optional<User> teacherUser = findUserById(teacherId);
-        Optional<User> studentUser = findUserById(studentId);
-        Optional<Course> course = findCourseByCode(courseCode);
-        if (teacherUser.isEmpty()
-                || studentUser.isEmpty()
-                || course.isEmpty()
-                || !(teacherUser.get() instanceof Teacher teacher)
-                || !(studentUser.get() instanceof Student student)
-                || marks == null) {
-            return false;
-        }
-        Enrollment enrollment = course.get().findEnrollment(student);
-        if (enrollment == null) {
-            return false;
-        }
-        return teacher.putMark(student, course.get(), marks);
-    }
-
     public boolean addResearcher(Researcher researcher) {
         if (researcher == null || !researcher.isResearcher() || researchers.contains(researcher)) {
             return false;
@@ -134,6 +114,29 @@ public class University implements Serializable, MessageMediator {
         researchers.add(researcher);
         addLog(null, "RESEARCHER_REGISTERED " + researcher.getResearcherName());
         return true;
+    }
+
+    public boolean activateResearcher(User user, String school) {
+        if (user == null || findUserById(user.getId()).isEmpty()) {
+            return false;
+        }
+
+        boolean activated;
+        if (user instanceof Student student) {
+            activated = student.becomeResearcher(school);
+        } else if (user instanceof Employee employee) {
+            activated = employee.becomeResearcher(school);
+        } else {
+            return false;
+        }
+
+        if (!activated || !(user instanceof Researcher researcher)) {
+            return false;
+        }
+
+        boolean added = addResearcher(researcher);
+        addLog(user, "RESEARCHER_ACTIVATED school=" + researcher.getResearchSchool());
+        return added || researchers.contains(researcher);
     }
 
     public boolean addProject(ResearchProject project) {

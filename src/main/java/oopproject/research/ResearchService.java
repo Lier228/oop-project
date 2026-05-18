@@ -88,6 +88,9 @@ public final class ResearchService {
 
     public static Optional<Researcher> findTopCitedResearcherOfSchool(Collection<? extends Researcher> researchers,
                                                                       String school) {
+        if (school == null || school.isBlank()) {
+            return Optional.empty();
+        }
         return researchers.stream()
                 .filter(researcher -> researcher != null && researcher.isResearcher())
                 .filter(researcher -> researcher.getResearchSchool().equalsIgnoreCase(school))

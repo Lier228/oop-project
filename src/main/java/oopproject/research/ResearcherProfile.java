@@ -8,22 +8,30 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import oopproject.exceptions.NonResearcherException;
-import oopproject.users.User;
 
 public class ResearcherProfile implements Researcher, Serializable {
     private static final long serialVersionUID = 1L;
 
+    private final Researcher owner;
     private final int ownerId;
     private final String ownerName;
     private String school;
     private final List<ResearchPaper> researchPapers = new ArrayList<>();
     private final Set<ResearchProject> researchProjects = new HashSet<>();
 
-    public ResearcherProfile(User owner, String school) {
-        this(owner.getId(), owner.getUsername(), school);
+    public ResearcherProfile(Researcher owner, String school) {
+        this(owner instanceof oopproject.users.User user ? user.getId() : 0,
+                owner instanceof oopproject.users.User user ? user.getUsername() : owner.getResearcherName(),
+                school,
+                owner);
     }
 
     public ResearcherProfile(int ownerId, String ownerName, String school) {
+        this(ownerId, ownerName, school, null);
+    }
+
+    private ResearcherProfile(int ownerId, String ownerName, String school, Researcher owner) {
+        this.owner = owner;
         this.ownerId = ownerId;
         this.ownerName = ownerName;
         this.school = school;
@@ -35,7 +43,7 @@ public class ResearcherProfile implements Researcher, Serializable {
             return false;
         }
         researchPapers.add(paper);
-        paper.addAuthor(this);
+        paper.addAuthor(authorIdentity());
         return true;
     }
 
@@ -48,19 +56,14 @@ public class ResearcherProfile implements Researcher, Serializable {
         if (project == null) {
             return false;
         }
-        boolean joined = project.addParticipant(this);
-        if (joined) {
-            researchProjects.add(project);
-        }
-        return joined;
+        return project.addParticipant(authorIdentity());
     }
 
     public boolean leaveProject(ResearchProject project) {
         if (project == null) {
             return false;
         }
-        project.deleteParticipant(this);
-        return researchProjects.remove(project);
+        return project.deleteParticipant(authorIdentity());
     }
 
     @Override
@@ -73,7 +76,24 @@ public class ResearcherProfile implements Researcher, Serializable {
     }
 
     @Override
+    public void attachResearchProject(ResearchProject project) {
+        if (project != null) {
+            researchProjects.add(project);
+        }
+    }
+
+    @Override
+    public void detachResearchProject(ResearchProject project) {
+        if (project != null) {
+            researchProjects.remove(project);
+        }
+    }
+
+    @Override
     public String getResearcherName() {
+        if (owner instanceof oopproject.users.User user) {
+            return user.getUsername();
+        }
         return ownerName;
     }
 
@@ -84,6 +104,10 @@ public class ResearcherProfile implements Researcher, Serializable {
 
     public void setSchool(String school) {
         this.school = school;
+    }
+
+    private Researcher authorIdentity() {
+        return owner != null ? owner : this;
     }
 
     public int getOwnerId() {

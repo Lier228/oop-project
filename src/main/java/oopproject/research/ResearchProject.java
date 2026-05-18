@@ -30,6 +30,7 @@ public class ResearchProject implements Serializable {
         }
         boolean added = participants.add(researcher);
         if (added) {
+            researcher.attachResearchProject(this);
             for (ResearchPaper paper : papers) {
                 paper.addAuthor(researcher);
             }
@@ -38,7 +39,11 @@ public class ResearchProject implements Serializable {
     }
 
     public boolean deleteParticipant(Researcher researcher) {
-        return participants.remove(researcher);
+        boolean removed = participants.remove(researcher);
+        if (removed && researcher != null) {
+            researcher.detachResearchProject(this);
+        }
+        return removed;
     }
 
     public boolean findParticipant(Researcher researcher) {
