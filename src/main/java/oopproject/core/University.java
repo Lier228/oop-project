@@ -70,7 +70,6 @@ public class University implements Serializable {
         addLog(null, "COURSE_OPENED " + course.get().getCode());
         return true;
     }
-
     public boolean closeCourseForRegistration(String code) {
         Optional<Course> course = findCourseByCode(code);
         if (course.isEmpty()) {
