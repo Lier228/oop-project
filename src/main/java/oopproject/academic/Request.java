@@ -13,6 +13,7 @@ public class Request implements Serializable {
     private RequestType type;
     private RequestStatus status;
     private String description;
+    private String responseComment;
     private long requestId;
 
     public Request() {
@@ -42,5 +43,25 @@ public class Request implements Serializable {
 
     public RequestStatus getStatus() {
         return status;
+    }
+
+    public int getSenderId() {
+        return senderId;
+    }
+
+    public RequestType getType() {
+        return type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getResponseComment() {
+        return responseComment;
+    }
+
+    public void setResponseComment(String responseComment) {
+        this.responseComment = responseComment;
     }
 }

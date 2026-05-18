@@ -8,6 +8,8 @@ import java.util.Optional;
 import oopproject.academic.Course;
 import oopproject.academic.Enrollment;
 import oopproject.academic.Mark;
+import oopproject.academic.Request;
+import oopproject.enums.RequestStatus;
 import oopproject.exceptions.AlreadyRegisteredException;
 import oopproject.exceptions.CreditLimitExceededException;
 import oopproject.enums.ResearchSortType;
@@ -31,6 +33,7 @@ public class University implements Serializable {
     private final List<Course> courses = new ArrayList<>();
     private final List<Researcher> researchers = new ArrayList<>();
     private final List<ResearchProject> projects = new ArrayList<>();
+    private final List<Request> requests = new ArrayList<>();
     private final List<Log> logs = new ArrayList<>();
 
     private University() {
@@ -70,6 +73,7 @@ public class University implements Serializable {
         addLog(null, "COURSE_OPENED " + course.get().getCode());
         return true;
     }
+
     public boolean closeCourseForRegistration(String code) {
         Optional<Course> course = findCourseByCode(code);
         if (course.isEmpty()) {
@@ -145,6 +149,15 @@ public class University implements Serializable {
         return true;
     }
 
+    public boolean addRequest(Request request) {
+        if (request == null || findRequestById(request.getRequestId()).isPresent()) {
+            return false;
+        }
+        requests.add(request);
+        addLog(null, "REQUEST_ADDED id=" + request.getRequestId());
+        return true;
+    }
+
     public boolean removeUserById(int id) {
         Optional<User> user = findUserById(id);
         if (user.isEmpty()) {
@@ -201,6 +214,12 @@ public class University implements Serializable {
                 .findFirst();
     }
 
+    public Optional<Request> findRequestById(long requestId) {
+        return requests.stream()
+                .filter(request -> request.getRequestId() == requestId)
+                .findFirst();
+    }
+
     public Optional<Researcher> findTopCitedResearcher() {
         return ResearchService.findTopCitedResearcher(researchers);
     }
@@ -237,11 +256,22 @@ public class University implements Serializable {
         logs.add(new Log(user, action));
     }
 
+    public boolean removeRequest(User actor, long requestId) {
+        Optional<Request> request = findRequestById(requestId);
+        if (request.isEmpty()) {
+            return false;
+        }
+        requests.remove(request.get());
+        addLog(actor, "REQUEST_REMOVED id=" + requestId);
+        return true;
+    }
+
     public void clear() {
         users.clear();
         courses.clear();
         researchers.clear();
         projects.clear();
+        requests.clear();
         logs.clear();
     }
 
@@ -255,15 +285,18 @@ public class University implements Serializable {
         courses.addAll(saved.courses);
         researchers.addAll(saved.researchers);
         projects.addAll(saved.projects);
+        if (saved.requests != null) {
+            requests.addAll(saved.requests);
+        }
         logs.addAll(saved.logs);
     }
 
     public List<User> getUsers() {
-        return Collections.unmodifiableList(users);
+        return users;
     }
 
     public List<Course> getCourses() {
-        return Collections.unmodifiableList(courses);
+        return courses;
     }
 
     public List<Course> getCoursesByStudent(Student student) {
@@ -285,11 +318,21 @@ public class University implements Serializable {
     }
 
     public List<Researcher> getResearchers() {
-        return Collections.unmodifiableList(researchers);
+        return researchers;
     }
 
     public List<ResearchProject> getProjects() {
         return Collections.unmodifiableList(projects);
+    }
+
+    public List<Request> getRequests() {
+        return Collections.unmodifiableList(requests);
+    }
+
+    public List<Request> getFinishedRequests() {
+        return requests.stream()
+                .filter(request -> request.getStatus() != RequestStatus.PENDING)
+                .toList();
     }
 
     public List<Log> getLogs() {

@@ -7,6 +7,7 @@ import oopproject.academic.Course;
 import oopproject.academic.News;
 import oopproject.academic.Report;
 import oopproject.academic.Request;
+import oopproject.core.University;
 import oopproject.enums.ManagerType;
 import oopproject.enums.ReportType;
 import oopproject.enums.UserType;
@@ -27,9 +28,15 @@ public class Manager extends Employee {
     }
 
     public void approveRegistration(Employee employee) {
+        if (employee != null) {
+            University.getInstance().addLog(this, "REGISTRATION_APPROVED employeeId=" + employee.getId());
+        }
     }
 
     public void rejectRegistration(Employee employee) {
+        if (employee != null) {
+            University.getInstance().addLog(this, "REGISTRATION_REJECTED employeeId=" + employee.getId());
+        }
     }
 
     public void assignTeacher(Course course, Teacher teacher) {
@@ -59,14 +66,11 @@ public class Manager extends Employee {
     }
 
     public List<Request> showRequests() {
-        return getRequestInstance();
+        return University.getInstance().getRequests();
     }
 
     public Request findRequestById(long requestId) {
-        return requests.stream()
-                .filter(request -> request.getRequestId() == requestId)
-                .findFirst()
-                .orElse(null);
+        return University.getInstance().findRequestById(requestId).orElse(null);
     }
 
     public Request showRequest(Request request) {
@@ -75,19 +79,48 @@ public class Manager extends Employee {
 
     public void reviewRequest(Request request, boolean status) {
         if (status) {
-            request.approve();
+            approveRequest(request);
         } else {
-            request.reject();
+            rejectRequest(request);
         }
     }
 
+    public boolean approveRequest(Request request) {
+        if (!isManagedRequest(request)) {
+            return false;
+        }
+        request.approve();
+        University.getInstance().addLog(this, "REQUEST_APPROVED id=" + request.getRequestId());
+        return true;
+    }
+
+    public boolean rejectRequest(Request request) {
+        if (!isManagedRequest(request)) {
+            return false;
+        }
+        request.reject();
+        University.getInstance().addLog(this, "REQUEST_REJECTED id=" + request.getRequestId());
+        return true;
+    }
+
+    public boolean commentRequest(Request request, String comment) {
+        if (!isManagedRequest(request) || comment == null || comment.isBlank()) {
+            return false;
+        }
+        request.setResponseComment(comment);
+        University.getInstance().addLog(this, "REQUEST_COMMENTED id=" + request.getRequestId());
+        return true;
+    }
+
     public void removeRequest(long requestId) {
-        requests.removeIf(request -> request.getRequestId() == requestId);
+        University.getInstance().removeRequest(this, requestId);
     }
 
     public List<Request> showFinishedRequests() {
-        return requests.stream()
-                .filter(request -> request.getStatus() != oopproject.enums.RequestStatus.PENDING)
-                .toList();
+        return University.getInstance().getFinishedRequests();
+    }
+
+    private boolean isManagedRequest(Request request) {
+        return request != null && University.getInstance().findRequestById(request.getRequestId()).isPresent();
     }
 }
