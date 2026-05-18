@@ -1,14 +1,12 @@
 package oopproject.users;
 
 import oopproject.academic.Course;
-import oopproject.core.Log;
 import oopproject.core.University;
 import oopproject.enums.UserType;
-import oopproject.exceptions.AlreadyRegisteredException;
-import oopproject.exceptions.CreditLimitExceededException;
 import oopproject.research.Researcher;
 
 import java.util.Optional;
+
 public class Admin extends User {
 
     University uni = University.getInstance();
@@ -17,6 +15,7 @@ public class Admin extends User {
     public Admin() {
         this.role = UserType.ADMIN;
     }
+
     public static Admin getInstance() {
         return INSTANCE;
     }
@@ -26,7 +25,9 @@ public class Admin extends User {
     }
 
     public boolean addUser(User user) {
-        if (user == null || uni.findUserById(user.getId()).isPresent()) {
+        if (user == null
+                || uni.findUserById(user.getId()).isPresent()
+                || uni.findUserByUsername(user.getUsername()).isPresent()) {
             return false;
         }
         uni.getUsers().add(user);
@@ -36,12 +37,6 @@ public class Admin extends User {
         uni.addLog(user, "USER_REGISTERED");
         return true;
     }
-
-//    public Optional<User> findUserById(int id) {
-//        return uni.getUsers().stream()
-//                .filter(user -> user.getId() == id)
-//                .findFirst();
-//    }
 
     public boolean removeUserById(int id) {
         Optional<User> user = uni.findUserById(id);
@@ -65,15 +60,6 @@ public class Admin extends User {
         return true;
     }
 
-//    public Optional<Course> findCourseByCode(String code) {
-//        if (code == null) {
-//            return Optional.empty();
-//        }
-//        return uni.getCourses().stream()
-//                .filter(course -> code.equalsIgnoreCase(course.getCode()))
-//                .findFirst();
-//    }
-
     public boolean removeCourseByCode(String code) {
         Optional<Course> course = uni.findCourseByCode(code);
         if (course.isEmpty()) {
@@ -92,8 +78,6 @@ public class Admin extends User {
         uni.addLog(null, "RESEARCHER_REGISTERED " + researcher.getResearcherName());
         return true;
     }
-
-    // Доделать то что ниже:
 
     public void updateLogs() {
         System.out.println("Logs updated");
@@ -124,5 +108,3 @@ public class Admin extends User {
         }
     }
 }
-
-//
