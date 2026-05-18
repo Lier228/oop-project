@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOP Project Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            color: #222;
+            background: #f6f8fb;
+        }
+
+        header {
+            background: #1f4d78;
+            color: white;
+            padding: 32px 48px;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 24px 56px;
+        }
+
+        section {
+            background: white;
+            border: 1px solid #d9e1ec;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        h1, h2, h3 {
+            margin-top: 0;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            color: #1f4d78;
+            border-bottom: 1px solid #d9e1ec;
+            padding-bottom: 8px;
+        }
+
+        code {
+            background: #eef2f7;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+        }
+
+        pre {
+            background: #101828;
+            color: #f8fafc;
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        th, td {
+            border: 1px solid #d9e1ec;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #eef2f7;
+        }
+
+        .meta {
+            color: #dce8f5;
+            margin: 0;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #e8eef5;
+            color: #1f4d78;
+            padding: 3px 8px;
+            border-radius: 999px;
+            font-size: 13px;
+            margin-right: 6px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Research-Oriented University Information System</h1>
+        <p class="meta">HTML Documentation for Main Project Classes</p>
+    </header>
+
+    <main>
+        <section>
+            <h2>Project Overview</h2>
+            <p>
+                This project is a console-based Java application for a research-oriented university.
+                It models users, courses, marks, lessons, research papers, research projects,
+                authentication, requests, logs, and data storage. The project demonstrates core
+                Object-Oriented Programming principles such as encapsulation, inheritance,
+                polymorphism, abstraction, interfaces, enums, custom exceptions, collections,
+                serialization, and design patterns.
+            </p>
+            <p>
+                Main packages: <code>oopproject.users</code>, <code>oopproject.academic</code>,
+                <code>oopproject.research</code>, <code>oopproject.core</code>,
+                <code>oopproject.enums</code>, and <code>oopproject.exceptions</code>.
+            </p>
+        </section>
+
+        <section>
+            <h2>Class Summary</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Class / Interface</th>
+                        <th>Package</th>
+                        <th>Main Responsibility</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>User</code></td>
+                        <td><code>oopproject.users</code></td>
+                        <td>Base abstract class for all system users.</td>
+                    </tr>
+                    <tr>
+                        <td><code>Student</code></td>
+                        <td><code>oopproject.users</code></td>
+                        <td>Represents students, course registration, transcript, marks, and ratings.</td>
+                    </tr>
+                    <tr>
+                        <td><code>Employee</code></td>
+                        <td><code>oopproject.users</code></td>
+                        <td>Base class for university employees.</td>
+                    </tr>
+                    <tr>
+                        <td><code>Teacher</code></td>
+                        <td><code>oopproject.users</code></td>
+                        <td>Manages courses, students, marks, materials, and research activity.</td>
+                    </tr>
+                    <tr>
+                        <td><code>Manager</code></td>
+                        <td><code>oopproject.users</code></td>
+                        <td>Manages registration, requests, news, reports, and teacher assignment.</td>
+                    </tr>
+                    <tr>
+                        <td><code>Admin</code></td>
+                        <td><code>oopproject.users</code></td>
+                        <td>Manages users, courses, researchers, roles, and logs.</td>
+                    </tr>
+                    <tr>
+                        <td><code>Course</code></td>
+                        <td><code>oopproject.academic</code></td>
+                        <td>Represents academic courses with instructors, lessons, materials, and enrollments.</td>
+                    </tr>
+                    <tr>
+                        <td><code>Marks</code></td>
+                        <td><code>oopproject.academic</code></td>
+                        <td>Stores and calculates student grades.</td>
+                    </tr>
+                    <tr>
+                        <td><code>Researcher</code></td>
+                        <td><code>oopproject.research</code></td>
+                        <td>Interface for research activity.</td>
+                    </tr>
+                    <tr>
+                        <td><code>ResearchPaper</code></td>
+                        <td><code>oopproject.research</code></td>
+                        <td>Represents a scientific paper with citations, DOI, pages, and authors.</td>
+                    </tr>
+                    <tr>
+                        <td><code>ResearchProject</code></td>
+                        <td><code>oopproject.research</code></td>
+                        <td>Represents a research project with participants and papers.</td>
+                    </tr>
+                    <tr>
+                        <td><code>University</code></td>
+                        <td><code>oopproject.core</code></td>
+                        <td>Main system class and storage for users, courses, researchers, projects, and logs.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>User</h2>
+            <p><span class="tag">Abstract class</span><span class="tag">Serializable</span></p>
+            <p>
+                <code>User</code> is the base abstract class for all user types in the system.
+                It stores common information such as id, username, password, email, role,
+                active status, inbox news, and direct messages.
+            </p>
+            <h3>Main Fields</h3>
+            <ul>
+                <li><code>id</code> - unique user identifier.</li>
+                <li><code>username</code> - login name.</li>
+                <li><code>password</code> - user password.</li>
+                <li><code>email</code> - user email address.</li>
+                <li><code>role</code> - user role from <code>UserType</code>.</li>
+                <li><code>active</code> - shows whether the user can log in.</li>
+            </ul>
+            <h3>Main Methods</h3>
+            <ul>
+                <li><code>checkPassword()</code> - checks password and active status.</li>
+                <li><code>sendMessage()</code> - sends a message through a mediator.</li>
+                <li><code>receiveMessage()</code> - receives a direct message.</li>
+                <li><code>block()</code> and <code>unblock()</code> - change user active status.</li>
+                <li><code>getId()</code>, <code>getUsername()</code>, <code>getEmail()</code> - getter methods.</li>
+            </ul>
+            <pre><code>public abstract class User implements Serializable {
+    protected int id;
+    protected String username;
+    protected String password;
+    protected String email;
+    protected UserType role;
+    protected boolean active = true;
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>Student</h2>
+            <p><span class="tag">Inherits User</span><span class="tag">Course registration</span></p>
+            <p>
+                <code>Student</code> extends <code>User</code> and represents a university student.
+                It stores GPA, year, credits, failed courses, schedule, enrollments, transcript,
+                teacher ratings, and research supervisor.
+            </p>
+            <h3>Main Fields</h3>
+            <ul>
+                <li><code>MAX_CREDITS</code> - maximum allowed number of credits, equal to 21.</li>
+                <li><code>gpa</code> - student GPA.</li>
+                <li><code>year</code> - year of study.</li>
+                <li><code>credits</code> - registered credits.</li>
+                <li><code>enrollments</code> - list of registered course enrollments.</li>
+                <li><code>transcript</code> - academic transcript.</li>
+            </ul>
+            <h3>Main Methods</h3>
+            <ul>
+                <li><code>registerCourse()</code> - registers a student for a course.</li>
+                <li><code>viewTranscript()</code> - returns student enrollments.</li>
+                <li><code>viewMarks()</code> - returns available marks.</li>
+                <li><code>assignResearchSupervisor()</code> - assigns a research supervisor.</li>
+                <li><code>rateTeacher()</code> - stores teacher rating.</li>
+            </ul>
+            <pre><code>public void registerCourse(Course course)
+        throws CreditLimitExceededException, AlreadyRegisteredException {
+    if (credits + course.getCredits() &gt; MAX_CREDITS) {
+        throw new CreditLimitExceededException(
+            "Student cannot register for more than " + MAX_CREDITS + " credits."
+        );
+    }
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>Employee</h2>
+            <p><span class="tag">Inherits User</span><span class="tag">Parent for Teacher and Manager</span></p>
+            <p>
+                <code>Employee</code> extends <code>User</code> and represents a university employee.
+                It stores salary, hire date, department, and employee requests. It is used as a
+                parent class for <code>Teacher</code> and <code>Manager</code>.
+            </p>
+            <h3>Main Fields</h3>
+            <ul>
+                <li><code>salary</code> - employee salary.</li>
+                <li><code>hireDate</code> - date of hiring.</li>
+                <li><code>department</code> - employee department.</li>
+                <li><code>requests</code> - list of employee requests.</li>
+            </ul>
+            <h3>Main Methods</h3>
+            <ul>
+                <li><code>addRequest()</code> - adds a request.</li>
+                <li><code>changeActive()</code> - blocks or unblocks employee.</li>
+                <li><code>getDepartment()</code> and <code>setDepartment()</code> - department access methods.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Teacher</h2>
+            <p><span class="tag">Inherits Employee</span><span class="tag">Implements Researcher</span></p>
+            <p>
+                <code>Teacher</code> extends <code>Employee</code> and implements <code>Researcher</code>.
+                A teacher can manage courses, view students, put marks, upload materials,
+                create tasks, and participate in research activity. Professors are automatically researchers.
+            </p>
+            <h3>Main Fields</h3>
+            <ul>
+                <li><code>title</code> - teacher title from <code>TeacherType</code>.</li>
+                <li><code>researcher</code> - shows whether the teacher is a researcher.</li>
+                <li><code>researchSchool</code> - research school name.</li>
+                <li><code>courses</code> - assigned courses.</li>
+                <li><code>researchPapers</code> - teacher's research papers.</li>
+            </ul>
+            <h3>Main Methods</h3>
+            <ul>
+                <li><code>putMark()</code> - puts marks for students.</li>
+                <li><code>viewStudents()</code> - returns students of a course.</li>
+                <li><code>uploadMaterial()</code> - adds material to a course.</li>
+                <li><code>becomeResearcher()</code> - changes teacher to researcher status.</li>
+                <li><code>addResearchPaper()</code> - adds a paper and adds the teacher as author.</li>
+            </ul>
+            <pre><code>public class Teacher extends Employee implements Researcher {
+    private TeacherType title;
+    private boolean researcher;
+    private final List&lt;Course&gt; courses = new ArrayList&lt;&gt;();
+    private final List&lt;ResearchPaper&gt; researchPapers = new ArrayList&lt;&gt;();
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>Manager</h2>
+            <p><span class="tag">Inherits Employee</span><span class="tag">Request management</span></p>
+            <p>
+                <code>Manager</code> extends <code>Employee</code>. It manages course registration,
+                assigns teachers, creates news, generates reports, and reviews requests.
+            </p>
+            <h3>Main Fields</h3>
+            <ul>
+                <li><code>type</code> - manager type from <code>ManagerType</code>.</li>
+                <li><code>news</code> - news created or managed by the manager.</li>
+            </ul>
+            <h3>Main Methods</h3>
+            <ul>
+                <li><code>assignTeacher()</code> - assigns a teacher to a course.</li>
+                <li><code>openCourseForRegistration()</code> - opens registration.</li>
+                <li><code>approveRequest()</code> - approves a request.</li>
+                <li><code>rejectRequest()</code> - rejects a request.</li>
+                <li><code>commentRequest()</code> - adds a response comment.</li>
+            </ul>
+            <pre><code>public boolean approveRequest(Request request) {
+    if (!isManagedRequest(request)) {
+        return false;
+    }
+    request.approve();
+    University.getInstance().addLog(this, "REQUEST_APPROVED id=" + request.getRequestId());
+    return true;
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>Admin</h2>
+            <p><span class="tag">Inherits User</span><span class="tag">System management</span></p>
+            <p>
+                <code>Admin</code> extends <code>User</code> and manages the system.
+                Admin can add and remove users, add and remove courses, register researchers,
+                update logs, block users, unblock users, and assign roles.
+            </p>
+            <h3>Main Responsibilities</h3>
+            <ul>
+                <li>User management.</li>
+                <li>Course management.</li>
+                <li>Researcher registration.</li>
+                <li>Log monitoring.</li>
+                <li>User blocking and unblocking.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Course</h2>
+            <p><span class="tag">Academic model</span><span class="tag">Serializable</span></p>
+            <p>
+                <code>Course</code> represents an academic course. It contains a name, code,
+                number of credits, open status, instructors, lessons, materials, and enrollments.
+                A course can have more than one instructor.
+            </p>
+            <h3>Main Fields</h3>
+            <ul>
+                <li><code>name</code> - course name.</li>
+                <li><code>code</code> - unique course code.</li>
+                <li><code>credits</code> - course credit value.</li>
+                <li><code>open</code> - registration status.</li>
+                <li><code>instructors</code> - list of course teachers.</li>
+                <li><code>enrollments</code> - student enrollments.</li>
+            </ul>
+            <h3>Main Methods</h3>
+            <ul>
+                <li><code>addStudent()</code> - adds student enrollment.</li>
+                <li><code>addInstructor()</code> - adds a teacher to the course.</li>
+                <li><code>findEnrollment()</code> - finds student enrollment.</li>
+                <li><code>setOpen()</code> - opens or closes registration.</li>
+            </ul>
+            <pre><code>public void addInstructor(Teacher teacher) {
+    if (teacher != null &amp;&amp; !instructors.contains(teacher)) {
+        instructors.add(teacher);
+    }
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>Marks</h2>
+            <p><span class="tag">Academic model</span><span class="tag">Grades</span></p>
+            <p>
+                <code>Marks</code> represents student grades. It stores first attestation marks,
+                second attestation marks, final exam mark, and calculates total results.
+            </p>
+            <h3>Main Responsibilities</h3>
+            <ul>
+                <li>Store attestation marks.</li>
+                <li>Store final exam mark.</li>
+                <li>Calculate total mark.</li>
+                <li>Check whether a student passed.</li>
+                <li>Merge new marks with existing marks.</li>
+            </ul>
+            <pre><code>public double getTotal() {
+    return getAtt1() + getAtt2() + getFinalExam();
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>Researcher</h2>
+            <p><span class="tag">Interface</span><span class="tag">Research abstraction</span></p>
+            <p>
+                <code>Researcher</code> is an interface that describes research behavior.
+                This design is flexible because a researcher can be a teacher, student,
+                or another employee type. The system only requires the object to provide
+                researcher behavior.
+            </p>
+            <h3>Main Methods</h3>
+            <ul>
+                <li><code>addResearchPaper()</code> - adds a research paper.</li>
+                <li><code>removeResearchPaper()</code> - removes a research paper.</li>
+                <li><code>getResearchPapers()</code> - returns papers.</li>
+                <li><code>getResearcherName()</code> - returns researcher name.</li>
+                <li><code>calculateHIndex()</code> - calculates h-index.</li>
+                <li><code>printPapers()</code> - prints sorted papers.</li>
+            </ul>
+            <pre><code>public interface Researcher extends Serializable {
+    boolean addResearchPaper(ResearchPaper paper);
+    boolean removeResearchPaper(ResearchPaper paper);
+    List&lt;ResearchPaper&gt; getResearchPapers();
+    String getResearcherName();
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>ResearchPaper</h2>
+            <p><span class="tag">Comparable</span><span class="tag">Serializable</span></p>
+            <p>
+                <code>ResearchPaper</code> represents a scientific paper. It stores important
+                information such as title, journal, publisher, pages, citations, publication date,
+                DOI, keywords, and authors.
+            </p>
+            <h3>Main Fields</h3>
+            <ul>
+                <li><code>title</code> - paper title.</li>
+                <li><code>journal</code> - journal name.</li>
+                <li><code>publisher</code> - publisher name.</li>
+                <li><code>pages</code> - article length.</li>
+                <li><code>citations</code> - citation count.</li>
+                <li><code>publishDate</code> - publication date.</li>
+                <li><code>doi</code> - digital object identifier.</li>
+                <li><code>authors</code> - list of researchers.</li>
+            </ul>
+            <h3>Main Methods</h3>
+            <ul>
+                <li><code>addAuthor()</code> - adds an author.</li>
+                <li><code>addCitation()</code> - increases citation count.</li>
+                <li><code>compareTo()</code> - compares papers by citations.</li>
+                <li><code>toDisplayString()</code> - returns formatted paper information.</li>
+            </ul>
+            <pre><code>@Override
+public int compareTo(ResearchPaper other) {
+    return Integer.compare(other.citations, citations);
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>ResearchProject</h2>
+            <p><span class="tag">Research model</span><span class="tag">Custom exception</span></p>
+            <p>
+                <code>ResearchProject</code> represents a research project. It contains a topic,
+                participants, and published papers. Only researchers can join a project.
+                If a non-researcher tries to join, <code>NonResearcherException</code> is thrown.
+            </p>
+            <h3>Main Fields</h3>
+            <ul>
+                <li><code>topic</code> - project topic.</li>
+                <li><code>participants</code> - set of researchers.</li>
+                <li><code>papers</code> - set of research papers.</li>
+            </ul>
+            <h3>Main Methods</h3>
+            <ul>
+                <li><code>addParticipant()</code> - adds only researcher participants.</li>
+                <li><code>deleteParticipant()</code> - removes participant.</li>
+                <li><code>addPaper()</code> - adds a paper to the project.</li>
+                <li><code>getParticipants()</code> - returns project participants.</li>
+            </ul>
+            <pre><code>public boolean addParticipant(Object candidate) throws NonResearcherException {
+    if (!(candidate instanceof Researcher researcher)) {
+        throw new NonResearcherException("Only researchers can join a research project.");
+    }
+    return addParticipant(researcher);
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>University</h2>
+            <p><span class="tag">Singleton</span><span class="tag">MessageMediator</span><span class="tag">Serializable</span></p>
+            <p>
+                <code>University</code> is the central class of the system. It stores the main
+                data collections and provides methods for user management, course management,
+                research management, requests, messages, and logs. It uses the Singleton pattern
+                so that the system has only one university instance.
+            </p>
+            <h3>Main Fields</h3>
+            <ul>
+                <li><code>users</code> - all system users.</li>
+                <li><code>courses</code> - all courses.</li>
+                <li><code>researchers</code> - all registered researchers.</li>
+                <li><code>projects</code> - research projects.</li>
+                <li><code>requests</code> - user requests.</li>
+                <li><code>logs</code> - system action logs.</li>
+            </ul>
+            <h3>Main Methods</h3>
+            <ul>
+                <li><code>addUser()</code> - adds a user.</li>
+                <li><code>addCourse()</code> - adds a course.</li>
+                <li><code>registerStudentToCourse()</code> - registers student for course.</li>
+                <li><code>putMark()</code> - puts marks through teacher validation.</li>
+                <li><code>sendMessage()</code> - sends direct messages.</li>
+                <li><code>addLog()</code> - records system actions.</li>
+            </ul>
+            <pre><code>private static final University INSTANCE = new University();
+
+private University() {
+}
+
+public static University getInstance() {
+    return INSTANCE;
+}</code></pre>
+        </section>
+
+        <section>
+            <h2>OOP Principles in the Project</h2>
+            <h3>Encapsulation</h3>
+            <p>
+                Fields are hidden using <code>private</code> or <code>protected</code>,
+                and access is provided through methods.
+            </p>
+            <h3>Inheritance</h3>
+            <p>
+                <code>Student</code> extends <code>User</code>,
+                <code>Employee</code> extends <code>User</code>,
+                <code>Teacher</code> extends <code>Employee</code>,
+                and <code>Manager</code> extends <code>Employee</code>.
+            </p>
+            <h3>Polymorphism</h3>
+            <p>
+                The system works with <code>User</code> references and opens different menus
+                depending on the actual runtime type of the user.
+            </p>
+            <h3>Abstraction</h3>
+            <p>
+                <code>Researcher</code> is an interface that abstracts research behavior.
+            </p>
+        </section>
+
+        <section>
+            <h2>Custom Exceptions</h2>
+            <ul>
+                <li><code>CreditLimitExceededException</code> - prevents students from exceeding 21 credits.</li>
+                <li><code>LowHIndexException</code> - prevents assigning a weak supervisor to a fourth-year student.</li>
+                <li><code>NonResearcherException</code> - prevents non-researchers from joining research projects.</li>
+                <li><code>AlreadyRegisteredException</code> - prevents duplicate course registration.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Design Patterns</h2>
+            <ul>
+                <li><strong>Singleton:</strong> <code>University</code> has one shared instance.</li>
+                <li><strong>Factory:</strong> <code>UserFactory</code> creates users based on <code>UserType</code>.</li>
+                <li><strong>Mediator:</strong> <code>MessageMediator</code> controls message sending between users.</li>
+                <li><strong>Data Store:</strong> <code>DataStore</code> saves and loads system state using serialization.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Enumerations</h2>
+            <p>
+                The project uses enums to represent fixed sets of values and make the code safer.
+            </p>
+            <ul>
+                <li><code>UserType</code> - user roles.</li>
+                <li><code>TeacherType</code> - teacher titles.</li>
+                <li><code>ManagerType</code> - manager categories.</li>
+                <li><code>LessonType</code> - lecture or practice.</li>
+                <li><code>ResearchSortType</code> - date, citations, or length sorting.</li>
+                <li><code>RequestStatus</code> and <code>RequestType</code> - request workflow values.</li>
+                <li><code>RoomType</code> and <code>DaysOfWeek</code> - schedule-related values.</li>
+            </ul>
+        </section>
+    </main>
+</body>
+</html>
