@@ -8,7 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import oopproject.academic.Course;
 import oopproject.academic.Enrollment;
-import oopproject.academic.Mark;
+import oopproject.academic.Marks;
 import oopproject.academic.Schedule;
 import oopproject.academic.StudyMaterial;
 import oopproject.academic.Transcript;
@@ -81,10 +81,10 @@ public class Student extends User {
         return transcript;
     }
 
-    public List<Mark> viewMarks() {
+    public List<Marks> viewMarks() {
         return enrollments.stream()
-                .map(Enrollment::getMark)
-                .filter(mark -> mark != null)
+                .map(Enrollment::getMarks)
+                .filter(marks -> marks != null)
                 .toList();
     }
 

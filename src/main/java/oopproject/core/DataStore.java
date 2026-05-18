@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import oopproject.academic.Course;
+import oopproject.academic.Enrollment;
 import oopproject.research.ResearchPaper;
 import oopproject.research.ResearchProject;
 import oopproject.research.Researcher;
@@ -129,7 +130,9 @@ public final class DataStore {
                     .append("\"code\": \"").append(escape(course.getCode())).append("\", ")
                     .append("\"name\": \"").append(escape(course.getName())).append("\", ")
                     .append("\"credits\": ").append(course.getCredits()).append(", ")
-                    .append("\"studentIds\": ").append(userIds(course.getStudents())).append(", ")
+                    .append("\"studentIds\": ").append(userIds(course.getEnrollments().stream()
+                            .map(Enrollment::getStudent)
+                            .toList())).append(", ")
                     .append("\"instructorIds\": ").append(userIds(course.getInstructors()))
                     .append("}");
         }

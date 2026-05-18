@@ -5,7 +5,7 @@ import oopproject.core.University;
 
 public class Main {
     public static void main(String[] args) {
-        if (args.length > 0 && "--console".equals(args[0])) {
+        if (args.length > 0 && "--console".equals(args[0]) || true) {
             new ConsoleUIController().start();
             return;
         }

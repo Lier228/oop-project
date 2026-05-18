@@ -7,23 +7,24 @@ import java.util.List;
 import java.util.Optional;
 import oopproject.academic.Course;
 import oopproject.academic.Enrollment;
-import oopproject.academic.Mark;
+import oopproject.academic.Marks;
 import oopproject.academic.Request;
 import oopproject.enums.RequestStatus;
+import oopproject.enums.RequestType;
+import oopproject.enums.ResearchSortType;
 import oopproject.exceptions.AlreadyRegisteredException;
 import oopproject.exceptions.CreditLimitExceededException;
-import oopproject.enums.ResearchSortType;
-import oopproject.research.Researcher;
 import oopproject.research.ResearchPaper;
 import oopproject.research.ResearchProject;
 import oopproject.research.ResearchService;
+import oopproject.research.Researcher;
 import oopproject.users.Admin;
 import oopproject.users.Manager;
 import oopproject.users.Student;
 import oopproject.users.Teacher;
 import oopproject.users.User;
 
-public class University implements Serializable {
+public class University implements Serializable, MessageMediator {
     private static final long serialVersionUID = 1L;
 
     private static final University INSTANCE = new University();
@@ -107,7 +108,7 @@ public class University implements Serializable {
         return true;
     }
 
-    public boolean putMark(int teacherId, int studentId, String courseCode, Mark mark) {
+    public boolean putMark(int teacherId, int studentId, String courseCode, Marks marks) {
         Optional<User> teacherUser = findUserById(teacherId);
         Optional<User> studentUser = findUserById(studentId);
         Optional<Course> course = findCourseByCode(courseCode);
@@ -116,19 +117,14 @@ public class University implements Serializable {
                 || course.isEmpty()
                 || !(teacherUser.get() instanceof Teacher teacher)
                 || !(studentUser.get() instanceof Student student)
-                || mark == null) {
-            return false;
-        }
-        if (!course.get().getInstructors().contains(teacher)) {
+                || marks == null) {
             return false;
         }
         Enrollment enrollment = course.get().findEnrollment(student);
         if (enrollment == null) {
             return false;
         }
-        teacher.putMark(enrollment, mark);
-        addLog(teacher, "MARK_PUT " + course.get().getCode() + " studentId=" + student.getId());
-        return true;
+        return teacher.putMark(student, course.get(), marks);
     }
 
     public boolean addResearcher(Researcher researcher) {
@@ -154,7 +150,24 @@ public class University implements Serializable {
             return false;
         }
         requests.add(request);
+        Request.ensureNextIdAbove(request.getRequestId());
         addLog(null, "REQUEST_ADDED id=" + request.getRequestId());
+        return true;
+    }
+
+    public boolean submitRequest(User sender, RequestType type, String description) {
+        if (sender == null
+                || type == null
+                || description == null
+                || description.isBlank()
+                || findUserById(sender.getId()).isEmpty()) {
+            return false;
+        }
+        if (type == RequestType.COMPLAIN && !(sender instanceof Student || sender instanceof Teacher)) {
+            return false;
+        }
+        requests.add(new Request(sender.getId(), type, RequestStatus.PENDING, description));
+        addLog(sender, "REQUEST_SUBMITTED " + type);
         return true;
     }
 
@@ -220,6 +233,15 @@ public class University implements Serializable {
                 .findFirst();
     }
 
+    public List<Request> getRequestsBySender(User sender) {
+        if (sender == null) {
+            return Collections.emptyList();
+        }
+        return requests.stream()
+                .filter(request -> request.getSenderId() == sender.getId())
+                .toList();
+    }
+
     public Optional<Researcher> findTopCitedResearcher() {
         return ResearchService.findTopCitedResearcher(researchers);
     }
@@ -257,12 +279,38 @@ public class University implements Serializable {
     }
 
     public boolean removeRequest(User actor, long requestId) {
-        Optional<Request> request = findRequestById(requestId);
-        if (request.isEmpty()) {
+        if (actor != null && !(actor instanceof Manager || actor instanceof Admin)) {
             return false;
         }
-        requests.remove(request.get());
-        addLog(actor, "REQUEST_REMOVED id=" + requestId);
+        boolean removed = requests.removeIf(request -> request.getRequestId() == requestId);
+        if (removed) {
+            addLog(actor, "REQUEST_REMOVED id=" + requestId);
+        }
+        return removed;
+    }
+
+    @Override
+    public boolean sendMessage(User sender, User recipient, String content) {
+        if (sender == null
+                || recipient == null
+                || content == null
+                || content.isBlank()
+                || sender.equals(recipient)) {
+            return false;
+        }
+
+        User registeredSender = findUserById(sender.getId()).orElse(null);
+        User registeredRecipient = findUserById(recipient.getId()).orElse(null);
+        if (registeredSender == null || registeredRecipient == null) {
+            return false;
+        }
+        if (!registeredSender.isActive() || !registeredRecipient.isActive()) {
+            return false;
+        }
+
+        Message message = new Message(registeredSender, registeredRecipient, content);
+        registeredRecipient.receiveMessage(message);
+        addLog(registeredSender, "DIRECT_MESSAGE_SENT to=" + registeredRecipient.getUsername());
         return true;
     }
 
@@ -287,6 +335,7 @@ public class University implements Serializable {
         projects.addAll(saved.projects);
         if (saved.requests != null) {
             requests.addAll(saved.requests);
+            saved.requests.forEach(request -> Request.ensureNextIdAbove(request.getRequestId()));
         }
         logs.addAll(saved.logs);
     }

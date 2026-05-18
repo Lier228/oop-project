@@ -8,7 +8,7 @@ public class Enrollment implements Serializable {
 
     private Student student;
     private Course course;
-    private Mark mark;
+    private Marks marks;
 
     public Enrollment() {
     }
@@ -26,17 +26,17 @@ public class Enrollment implements Serializable {
         return course;
     }
 
-    public Mark getMark() {
-        return mark;
+    public Marks getMarks() {
+        return marks;
     }
 
-    public void setMark(Mark mark) {
-        this.mark = mark;
+    public void setMarks(Marks marks) {
+        this.marks = marks;
     }
 
     @Override
     public String toString() {
-        String markText = mark == null ? "not graded" : mark.toString();
+        String markText = marks == null ? "not graded" : marks.toString();
         return course.getCode() + " - " + course.getName() + ": " + markText;
     }
 }

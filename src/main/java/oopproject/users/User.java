@@ -1,11 +1,17 @@
 package oopproject.users;
 
 import java.io.Serializable;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 import oopproject.academic.News;
+import oopproject.academic.Request;
+import oopproject.core.Message;
+import oopproject.core.MessageMediator;
+import oopproject.core.University;
 import oopproject.enums.UserType;
 
 public abstract class User implements Serializable {
@@ -18,6 +24,7 @@ public abstract class User implements Serializable {
     protected UserType role;
     protected boolean active = true;
     protected final List<News> inboxNews = new ArrayList<>();
+    protected Deque<Message> inboxMessages = new ArrayDeque<>();
 
     public User() {
     }
@@ -41,6 +48,16 @@ public abstract class User implements Serializable {
     public void receiveNews(News news) {
         if (news != null) {
             inboxNews.add(news);
+        }
+    }
+
+    public boolean sendMessage(User recipient, String content, MessageMediator mediator) {
+        return mediator != null && mediator.sendMessage(this, recipient, content);
+    }
+
+    public void receiveMessage(Message message) {
+        if (message != null) {
+            directMessageInbox().offer(message);
         }
     }
 
@@ -93,6 +110,21 @@ public abstract class User implements Serializable {
 
     public List<News> getInboxNews() {
         return Collections.unmodifiableList(inboxNews);
+    }
+
+    public List<Message> getInboxMessages() {
+        return Collections.unmodifiableList(new ArrayList<>(directMessageInbox()));
+    }
+
+    public List<Request> viewCreatedRequests() {
+        return University.getInstance().getRequestsBySender(this);
+    }
+
+    private Deque<Message> directMessageInbox() {
+        if (inboxMessages == null) {
+            inboxMessages = new ArrayDeque<>();
+        }
+        return inboxMessages;
     }
 
     @Override

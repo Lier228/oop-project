@@ -26,7 +26,7 @@ public class Transcript implements Serializable {
     public List<Enrollment> getGradedEnrollments() {
         List<Enrollment> graded = new ArrayList<>();
         for (Enrollment enrollment : getEnrollments()) {
-            if (enrollment.getMark() != null) {
+            if (enrollment.getMarks() != null) {
                 graded.add(enrollment);
             }
         }
@@ -41,7 +41,7 @@ public class Transcript implements Serializable {
 
     public int getCompletedCredits() {
         return getGradedEnrollments().stream()
-                .filter(enrollment -> isPassed(enrollment.getMark()))
+                .filter(enrollment -> isPassed(enrollment.getMarks()))
                 .mapToInt(enrollment -> enrollment.getCourse().getCredits())
                 .sum();
     }
@@ -53,7 +53,7 @@ public class Transcript implements Serializable {
         }
         double total = 0.0;
         for (Enrollment enrollment : graded) {
-            total += enrollment.getMark().getTotal();
+            total += enrollment.getMarks().getTotal();
         }
         return total / graded.size();
     }
@@ -68,7 +68,7 @@ public class Transcript implements Serializable {
         int credits = 0;
         for (Enrollment enrollment : graded) {
             int courseCredits = enrollment.getCourse().getCredits();
-            weightedPoints += getGradePoint(enrollment.getMark()) * courseCredits;
+            weightedPoints += getGradePoint(enrollment.getMarks()) * courseCredits;
             credits += courseCredits;
         }
         return credits == 0 ? 0.0 : weightedPoints / credits;
@@ -101,15 +101,15 @@ public class Transcript implements Serializable {
         return Collections.unmodifiableList(lines);
     }
 
-    public boolean isPassed(Mark mark) {
-        return mark != null && mark.getTotal() >= 50.0;
+    public boolean isPassed(Marks marks) {
+        return marks != null && marks.getTotal() >= 50.0;
     }
 
-    public double getGradePoint(Mark mark) {
-        if (mark == null) {
+    public double getGradePoint(Marks marks) {
+        if (marks == null) {
             return 0.0;
         }
-        double total = mark.getTotal();
+        double total = marks.getTotal();
         if (total >= 95) {
             return 4.0;
         }
