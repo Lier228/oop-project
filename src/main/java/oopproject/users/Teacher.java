@@ -2,24 +2,19 @@ package oopproject.users;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import oopproject.academic.Course;
 import oopproject.academic.Enrollment;
+import oopproject.academic.Lesson;
 import oopproject.academic.Marks;
 import oopproject.academic.StudyMaterial;
 import oopproject.core.University;
 import oopproject.enums.TeacherType;
 import oopproject.enums.UserType;
-import oopproject.research.ResearchPaper;
-import oopproject.research.Researcher;
 
-public class Teacher extends Employee implements Researcher {
+public class Teacher extends Employee {
     private TeacherType title;
-    private boolean researcher;
-    private String researchSchool = "UNSPECIFIED";
     private final List<Course> courses = new ArrayList<>();
-    private final List<ResearchPaper> researchPapers = new ArrayList<>();
 
     public Teacher() {
         this.role = UserType.TEACHER;
@@ -30,7 +25,9 @@ public class Teacher extends Employee implements Researcher {
         super(id, username, password, email, salary, hireDate);
         this.role = UserType.TEACHER;
         this.title = title;
-        this.researcher = title == TeacherType.PROFESSOR;
+        if (title == TeacherType.PROFESSOR) {
+            becomeResearcher(null);
+        }
     }
 
     public boolean putMark(Student student, Course course, Marks marks) {
@@ -55,7 +52,7 @@ public class Teacher extends Employee implements Researcher {
     }
 
     public List<Student> viewStudents(Course course) {
-        if (course == null) {
+        if (course == null || !teachesCourse(course)) {
             return List.of();
         }
         return course.getEnrollments().stream()
@@ -63,12 +60,34 @@ public class Teacher extends Employee implements Researcher {
                 .toList();
     }
 
-    public void uploadMaterial(StudyMaterial material, Course course) {
-        course.addMaterial(material);
+    public StudyMaterial createTask(String title, String description, String fileName, LocalDate deadline, Course course) {
+        return StudyMaterial.builder()
+                .title(title)
+                .description(description)
+                .fileName(fileName)
+                .deadline(deadline)
+                .task(true)
+                .uploadedBy(this)
+                .course(course)
+                .build();
     }
 
-    public StudyMaterial createTask(String title, String description, String fileName, LocalDate deadline, Course course) {
-        return new StudyMaterial(title, description, fileName, deadline, true, this, course);
+    public boolean addLessonToCourse(Course course, Lesson lesson) {
+        if (course == null || lesson == null || !teachesCourse(course)) {
+            return false;
+        }
+        course.addLesson(lesson);
+        University.getInstance().addLog(this, "LESSON_ADDED " + course.getCode());
+        return true;
+    }
+
+    public boolean uploadMaterial(StudyMaterial material, Course course) {
+        if (material == null || course == null || !teachesCourse(course)) {
+            return false;
+        }
+        course.addMaterial(material);
+        University.getInstance().addLog(this, "MATERIAL_ADDED " + course.getCode() + " " + material);
+        return true;
     }
 
     public void gradeSubmission(Student student, StudyMaterial material, Marks marks, Course course) {
@@ -83,57 +102,42 @@ public class Teacher extends Employee implements Researcher {
     }
 
     public void addCourse(Course course) {
-        courses.add(course);
-        course.addInstructor(this);
-    }
-
-    public void becomeResearcher(String school) {
-        researcher = true;
-        researchSchool = school;
-    }
-
-    @Override
-    public boolean addResearchPaper(ResearchPaper paper) {
-        if (paper == null || researchPapers.contains(paper)) {
-            return false;
+        if (course != null && !courses.contains(course)) {
+            courses.add(course);
+            course.addInstructor(this);
         }
-        researcher = true;
-        researchPapers.add(paper);
-        paper.addAuthor(this);
-        return true;
     }
 
-    @Override
-    public int calculateHIndex() {
-        return Researcher.super.calculateHIndex();
+    public List<Course> getAssignedCourses() {
+        return University.getInstance().getCoursesByTeacher(this);
     }
 
-    @Override
-    public boolean removeResearchPaper(ResearchPaper paper) {
-        return researchPapers.remove(paper);
-    }
-
-    @Override
-    public List<ResearchPaper> getResearchPapers() {
-        return Collections.unmodifiableList(researchPapers);
-    }
-
-    @Override
-    public String getResearcherName() {
-        return username;
-    }
-
-    @Override
-    public boolean isResearcher() {
-        return researcher;
-    }
-
-    @Override
-    public String getResearchSchool() {
-        return researchSchool;
+    public Course findAssignedCourseByCode(String courseCode) {
+        if (courseCode == null) {
+            return null;
+        }
+        return getAssignedCourses().stream()
+                .filter(course -> courseCode.equalsIgnoreCase(course.getCode()))
+                .findFirst()
+                .orElse(null);
     }
 
     public TeacherType getTitle() {
         return title;
+    }
+
+    public void setTitle(TeacherType title) {
+        this.title = title;
+        if (title == TeacherType.PROFESSOR) {
+            becomeResearcher(getResearchSchool());
+        }
+    }
+
+    public List<Course> getCourses() {
+        return List.copyOf(courses);
+    }
+
+    public boolean teachesCourse(Course course) {
+        return course != null && course.getInstructors().contains(this);
     }
 }

@@ -15,15 +15,23 @@ public class Course implements Serializable {
     private String code;
     private int credits;
     private boolean open;
+    private String targetMajor;
+    private Integer targetYear;
     private final List<Teacher> instructors = new ArrayList<>();
     private final List<Lesson> lessons = new ArrayList<>();
     private final List<StudyMaterial> materials = new ArrayList<>();
     private final List<Enrollment> enrollments = new ArrayList<>();
 
     public Course(String name, String code, int credits) {
+        this(name, code, credits, null, null);
+    }
+
+    public Course(String name, String code, int credits, String targetMajor, Integer targetYear) {
         this.name = name;
         this.code = code;
         this.credits = credits;
+        this.targetMajor = targetMajor;
+        this.targetYear = targetYear;
     }
 
     public void addStudent(Student student) {
@@ -89,8 +97,24 @@ public class Course implements Serializable {
         return open;
     }
 
+    public String getTargetMajor() {
+        return targetMajor;
+    }
+
+    public Integer getTargetYear() {
+        return targetYear;
+    }
+
     public void setOpen(boolean open) {
         this.open = open;
+    }
+
+    public void setTargetMajor(String targetMajor) {
+        this.targetMajor = targetMajor;
+    }
+
+    public void setTargetYear(Integer targetYear) {
+        this.targetYear = targetYear;
     }
 
     public List<Teacher> getInstructors() {
@@ -115,6 +139,10 @@ public class Course implements Serializable {
 
     @Override
     public String toString() {
-        return code + " - " + name + " (" + credits + " credits, open=" + open + ")";
+        String audience = targetMajor == null && targetYear == null
+                ? ""
+                : ", target=" + (targetMajor == null ? "any major" : targetMajor)
+                + (targetYear == null ? "" : " year " + targetYear);
+        return code + " - " + name + " (" + credits + " credits, open=" + open + audience + ")";
     }
 }
